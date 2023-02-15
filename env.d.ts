@@ -10,6 +10,8 @@ declare global {
       ACCESS_TOKEN_EXP: string;
       REFRESH_TOKEN_EXP: string;
       REDIS_CACHE_EXP: string;
+      DISCORD_CLIENT_ID: string;
+      DISCORD_CLIENT_SECRET: string;
     }
   }
 }
