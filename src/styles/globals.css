@@ -3,9 +3,13 @@
 @tailwind utilities;
 
 :root{
-    --sidebar-w:80px;
+    --sidebar-w:100px;
+    --sidebar-title-h:2rem;
     --navbar-h:34px;
     --terminal-h:140px;
+}
+body{
+    background-color: #282c34;
 }
 .loader {
   width: 48px;

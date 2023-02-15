@@ -74,7 +74,7 @@ export const loginHandler = async ({
         path: "/",
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
-        maxAge: Number(process.env.ACCESS_TOKEN_EXP),
+        maxAge: Number(process.env.ACCESS_TOKEN_EXP ),
       })
     );
     const { username, id } = user;

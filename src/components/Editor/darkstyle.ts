@@ -4,7 +4,8 @@ import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { tags as t } from "@lezer/highlight";
 import { NAV_HEIGHT, TERMINAL_HEIGHT } from "../../constants/css";
 
-const base00 = "#002b36",
+// const base00 = "#002b36",
+const base00 = "#282c34",
   base01 = "#073642",
   base02 = "#586e75",
   base03 = "#657b83",
@@ -40,10 +41,10 @@ export const solarizedDarkTheme = EditorView.theme(
 
     ".cm-content": {
       caretColor: cursor,
-      minHeight: `calc(100vh - (var(--navbar-h) + var(--terminal-h)) - 1px)`,
+      minHeight: `calc(100vh - (var(--navbar-h) + var(--sidebar-title-h) + var(--terminal-h)) - 1px)`,
     },
-
     ".cm-cursor, .cm-dropCursor": { borderLeftColor: cursor },
+        ".cm-scroller .cm-content":{paddingTop:"0px"},
     "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection":
       { backgroundColor: selection },
     ".cm-panels": { backgroundColor: darkBackground, color: base03 },
@@ -65,7 +66,7 @@ export const solarizedDarkTheme = EditorView.theme(
     },
 
     ".cm-gutters": {
-      backgroundColor: darkBackground,
+      backgroundColor: background,
       color: stone,
       border: "none",
     },
