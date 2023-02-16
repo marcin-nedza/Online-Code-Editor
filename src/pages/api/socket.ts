@@ -14,6 +14,7 @@ export default function SocketHandler(req, res:any) {
     io.on("connection", async (socket) => {
         connectToRoomListener(socket)
         socket.on(ROOM_ACTION.CODE_CHANGED,(data)=>{
+                console.log("HEJA",data)
                 socket.to(data.projectId).emit(ROOM_ACTION.SEND_MESSAGE,(data))
             })
       socket.on("disconnect", async () => {

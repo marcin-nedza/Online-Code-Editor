@@ -47,15 +47,12 @@ export const signToken = async (user: User) => {
 await redisClient.set(`${user.id}`,JSON.stringify(user),{
         EX:Number(process.env.REDIS_CACHE_EXP)  
     })
-   // const access_token = signJwt({ sub: user }, process.env.ACCESS_TOKEN, {
-   //   expiresIn: `${process.env.ACCESS_TOKEN_EXP}s`,
-   // });
-  
+
 const access_token = await new SignJWT({sub:user})
       .setProtectedHeader({ alg: "HS256" })
       .setJti(nanoid())
       .setIssuedAt()
-      .setExpirationTime("10m")
+      .setExpirationTime(`${process.env.ACCESS_TOKEN_EXP}s`)
       .sign(new TextEncoder().encode(process.env.ACCESS_TOKEN));
 
   // const refresh_token = signJwt({ sub: user }, process.env.REFRESH_TOKEN, {

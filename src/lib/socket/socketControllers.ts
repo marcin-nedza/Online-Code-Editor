@@ -13,17 +13,14 @@ export const updateContentEmitter = (
   });
 };
 
-// socket.on("connect", async () => {
-//   if (projectId) {
-//     connectToRoomEmitter(socket, projectId);
-//   }
-// });
+
 export const connectToRoom = (
   socket: SocketClient,
   projectId: string | string[]
 ) => {
   socket.on("connect", () => {
       socket.emit(ROOM_ACTION.CONNECT_TO_ROOM, projectId);
+
   });
 };
 export const userConnectedListener = (socket: SocketClient) => {
@@ -34,7 +31,7 @@ export const userConnectedListener = (socket: SocketClient) => {
 //server
 export const connectToRoomListener = (socket: SocketServer) => {
   socket.on(ROOM_ACTION.CONNECT_TO_ROOM, async (roomId: string) => {
-    await socket.join(roomId);
+     await socket.join(roomId);
     socket.to(roomId).emit(ROOM_ACTION.USER_CONNECTED, "User joined");
   });
 };

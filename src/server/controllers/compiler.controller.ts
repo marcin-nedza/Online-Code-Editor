@@ -18,6 +18,7 @@ export const runCodeController = (input: TCode): Promise<string> => {
 
     runner.on("close", (code) => {
       if (code === 0) {
+                
                 console.log('Asdas',runnerOutput)
         resolve(runnerOutput);
       } else {

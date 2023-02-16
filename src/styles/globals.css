@@ -7,6 +7,7 @@
     --sidebar-title-h:2rem;
     --navbar-h:34px;
     --terminal-h:140px;
+    --terminal-title-h:30px;
 }
 body{
     background-color: #282c34;

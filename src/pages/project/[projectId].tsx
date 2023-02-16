@@ -32,10 +32,11 @@ const ProjectPage = () => {
       setCode(val.data.content ?? "");
     },
   });
+
   const handleRunCode = () => {
     runCode({ content: code });
   };
-
+ 
   //when redirected to diffrent project, reset terminal output
   //then fetch current project
   useEffect(() => {
@@ -71,7 +72,7 @@ const ProjectPage = () => {
                 // bg-main-bg
                 // py-2"
                 >
-                  <div className="flex h-[var(--sidebar-title-h)]  w-[856px] items-center bg-main-bg text-xs text-white">
+                  <div className="flex h-[var(--sidebar-title-h)]  w-full items-center bg-main-bg text-xs text-white">
                     <p>title &nbsp; </p>
                     <p className="text-green-400"> &gt; </p>
                     <p className="">&nbsp; {data?.data.title}</p>{" "}
