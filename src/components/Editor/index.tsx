@@ -1,22 +1,19 @@
-import { defaultKeymap } from "@codemirror/commands";
-import { javascript } from "@codemirror/lang-javascript";
 import { EditorState } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers } from "@codemirror/view";
-import { basicSetup } from "codemirror";
+import { EditorView } from "@codemirror/view";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { ROOM_ACTION } from "../../constants/events";
 import {
-  connectToRoom,
-  updateContentEmitter,
-  userConnectedListener,
+    connectToRoom,
+    updateContentEmitter,
+    userConnectedListener
 } from "../../lib/socket/socketControllers";
 import { TViewState } from "../../schemas/socket";
-import { api } from "../../utils/api";
 import Spinner from "../Spinner";
-import { extensions as basicExtensions } from "./config";
-import { solarizedDark } from "./darkstyle";
+import { basicExtensions } from "./basicExtensions";
+import { useSaveProject } from "./keyBindings";
+
 let socket: Socket;
 
 const Editor = ({
@@ -26,55 +23,18 @@ const Editor = ({
   code: string;
   setCode: (val: string) => void;
 }) => {
-  const [showElement, setShowElement] = useState(false);
-  const [first, setFirst] = useState("");
   const editor = useRef<HTMLInputElement>();
   const router = useRouter();
-  const { projectId } = router.query;
+  const  projectId  = router.query?.projectId ?? ''
 
-  //TODO:move to socket config
-  const onUpdate = EditorView.updateListener.of((v) => {
-    setCode(v.state.doc.toString());
-    console.log("AAAA");
-  });
+  const { myKeymap, showElement, setShowElement, isLoading } =
+    useSaveProject(projectId);
 
-  const {
-    mutate: save,
-    isLoading,
-    isSuccess,
-  } = api.project.updateProject.useMutation();
-
-  const handleSave = (text: string) => {
-    save({ id: projectId, content: text });
-  };
-
-  //keybinding ctrl +s to save content of project
-  const myKeymap = keymap.of([
-    {
-      key: "Mod-s",
-
-      run: (state: EditorView) => {
-        handleSave(state.state.doc.toString());
-        setShowElement(true);
-        return true;
-      },
-    },
-  ]);
   useEffect(() => {
     fetch("/api/socket");
     socket = io();
-
     const extensions = [
-keymap.of(defaultKeymap),
-  basicSetup,
-  javascript({
-    jsx: true,
-    typescript: true,
-  }),
-  lineNumbers(),
-  solarizedDark,
-
-      onUpdate,
+      basicExtensions,
       myKeymap,
       EditorView.updateListener.of((v) => {
         if (v.docChanged) {
@@ -83,14 +43,15 @@ keymap.of(defaultKeymap),
             text: view.state.doc.toString(),
             projectId,
           };
-          console.log("changed");
+          setCode(v.state.doc.toString());
           socket.emit(ROOM_ACTION.CODE_CHANGED, data);
         }
       }),
     ];
+
     const startState = EditorState.create({
       extensions: extensions,
-            doc:code
+      doc: code,
     });
     const view = new EditorView({
       state: startState,
@@ -98,10 +59,8 @@ keymap.of(defaultKeymap),
     });
 
     if (!view) return;
-    if (router.isReady) {
-      if (projectId) {
-        connectToRoom(socket, projectId);
-      }
+    if (router.isReady && projectId) {
+      connectToRoom(socket, projectId);
       const update = (updatedData: TViewState) => {
         view.setState(
           EditorState.create({ doc: updatedData.text, extensions: extensions })
@@ -115,11 +74,14 @@ keymap.of(defaultKeymap),
       view.destroy();
     };
   }, [projectId, router.isReady]);
+
+    //function to show Save component for 3500ms
   useEffect(() => {
     setTimeout(() => {
       setShowElement(false);
     }, 3500);
   }, [showElement]);
+
   return (
     <>
       {/*@ts-expect-error asdad */}

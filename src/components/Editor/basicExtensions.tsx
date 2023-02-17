@@ -4,7 +4,7 @@ import { keymap, lineNumbers } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { solarizedDark } from "./darkstyle";
 
- const extensions = [
+const basicExtensions = [
   keymap.of(defaultKeymap),
   basicSetup,
   javascript({
@@ -15,6 +15,4 @@ import { solarizedDark } from "./darkstyle";
   solarizedDark,
 ];
 
-export  {
-    extensions
-}
+export { basicExtensions  };

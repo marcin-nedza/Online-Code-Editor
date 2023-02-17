@@ -3,8 +3,9 @@ import { TERMINAL_HEIGHT } from "../../constants/css";
 
 type Props = {
   output: string;
+isBarOpen:boolean;
 };
-const Terminal = ({ output }: Props) => {
+const Terminal = ({ output,isBarOpen }: Props) => {
     const [selectedOption, setSelectedOption] = useState('output')
 
     const handleOptionClick=(option)=>{
@@ -27,7 +28,7 @@ const Terminal = ({ output }: Props) => {
         className={`
              scrollbar-hide 
              h-[calc(var(--terminal-h)_-_var(--terminal-title-h))] 
-             w-[calc(100vw_-_var(--sidebar-w))] overflow-y-scroll 
+             w-[calc(100vw_-_var(--sidebar-w)${isBarOpen?'_-_var(--utilitybar-w)':''})] overflow-y-scroll 
              whitespace-pre-wrap bg-main-bg 
              pl-4 text-xs text-white`}
       >
