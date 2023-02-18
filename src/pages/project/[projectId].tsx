@@ -74,13 +74,15 @@ const ProjectPage = () => {
                             title={data?.data.title}
                             isAddUserOpen={isAddUsersOpen}
                             setAddUsersMenuOpen={setAddUsersMenuOpen}
-                            />
+                            >
+
                         <div className="flex bg-gray-200">
                             <div className="relative w-full">
                                 {isLoading && <Spinner />}
                                 {isSuccess && <Editor code={code} setCode={setCode} />}
                             </div>
                         </div>
+                        </ProjectBar>
                         <Terminal output={compilerData ?? ""} />
                     </div>
                     {utilityBarOpen && (
