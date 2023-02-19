@@ -1,7 +1,9 @@
 import {
+    assignUserToProjectSchema,
     createProjectInputSchema, getOneProjectSchema,updateProjectSchema
 } from "../../../schemas/project";
 import {
+    assignUserToProjectHandler,
     createProjectHandler,
     getAllProjectHandler,
     getOneProjectHandler,
@@ -25,5 +27,10 @@ export const projectRouter = createTRPCRouter({
   ),
     updateProject:publicProcedure
     .input(updateProjectSchema)
-    .mutation(({input})=>updateProjectHandler(input))
+    .mutation(({input})=>updateProjectHandler(input)),
+
+    assignUserToProject:publicProcedure
+    .input(assignUserToProjectSchema)
+    .mutation(({input})=>assignUserToProjectHandler({email:input.email,projectId:input.projectId}))
+
 });

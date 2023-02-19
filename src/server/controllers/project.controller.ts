@@ -1,19 +1,22 @@
-import { Project } from "@prisma/client";
+import { Project, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
   ICreateProject,
   ICreateProjectInput,
   IGetOneProjectSchema,
+  TAssignUserToProject,
   TUpadeteProjectSchema,
 } from "../../schemas/project";
 import { Context } from "../api/trpc";
 import { findUniqueProject } from "../repository/project.repository";
 import {
+  assignUserToProjectService,
   createProjectService,
   getAllProject,
   saveProject,
 } from "../services/project.service";
-//console
+import { findUniqueUser } from "../services/user.service";
+
 export const createProjectHandler = async ({
   input,
   ctx: { req, user },
@@ -108,6 +111,27 @@ export const updateProjectHandler = async (input: TUpadeteProjectSchema) => {
     return {
       status: "success",
       data: updatedProject,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+export const assignUserToProjectHandler = async ({
+    projectId,
+  email,
+}: {
+        projectId:string
+  email: string;
+}) => {
+  try {
+    const colaborator = await findUniqueUser({ email: email });
+    const project = await assignUserToProjectService({
+      colaboratorId: colaborator.id,
+            projectId:projectId
+    });
+    return {
+      status: "success",
+      data: project,
     };
   } catch (error) {
     throw error;

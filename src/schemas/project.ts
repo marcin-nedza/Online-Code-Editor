@@ -16,8 +16,13 @@ export const updateProjectSchema = z.object({
     content:z.string(),
 
 })
+export const assignUserToProjectSchema=z.object({
+    email:z.string().email(),
+    projectId:z.string()
+})
 
 export type IGetOneProjectSchema = z.infer<typeof getOneProjectSchema>
 export type ICreateProject = z.infer<typeof createProjectSchema>;
 export type ICreateProjectInput = z.infer<typeof createProjectInputSchema>
 export type TUpdatedProject = z.infer<typeof updateProjectSchema>
+export type TAssignUserToProject = z.infer<typeof assignUserToProjectSchema>

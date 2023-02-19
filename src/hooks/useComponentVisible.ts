@@ -8,7 +8,7 @@ function useOutsideAlerter(ref,fn) {
     function handleClickOutside(event) {
       if (ref.current && !ref.current.contains(event.target)) {
                 fn(false)
-      }
+            }
     }
     // Bind the event listener
     document.addEventListener("mousedown", handleClickOutside);

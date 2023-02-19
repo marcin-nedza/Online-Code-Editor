@@ -10,7 +10,7 @@ const ProjectPage = () => {
     const router = useRouter();
     const { isAddUsersOpen, setAddUsersMenuOpen } = useManageState();
     const [code, setCode] = useState<string>("");
-    const [utilityBarOpen, setUtilityBarOpen] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<'project'|'option'>("project");
     const { projectId } = router.query;
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, setAddUsersMenuOpen);
@@ -37,7 +37,6 @@ const ProjectPage = () => {
     const handleRunCode = () => {
         runCode({ content: code });
     };
-
     //when redirected to diffrent project, reset terminal output
     //then fetch current project
     useEffect(() => {
@@ -58,6 +57,7 @@ const ProjectPage = () => {
     if (isProjectLoading) {
         return <Spinner />;
     }
+    console.log({isAddUsersOpen,selectedOption})
     return (
         <div className="flex w-screen bg-gray-200">
             <div className="flex flex-col">
@@ -66,6 +66,7 @@ const ProjectPage = () => {
                     handleRunCode={handleRunCode}
                     isAddUsersOpen={isAddUsersOpen}
                     setAddUsersMenuOpen={setAddUsersMenuOpen}
+                    setSelectedOption={setSelectedOption}
                 />
                 <div className="flex">
                     <Sidebar />
@@ -74,6 +75,8 @@ const ProjectPage = () => {
                             title={data?.data.title}
                             isAddUserOpen={isAddUsersOpen}
                             setAddUsersMenuOpen={setAddUsersMenuOpen}
+                            selectedOption={selectedOption}
+                            setSelectedOption={setSelectedOption}
                             >
 
                         <div className="flex bg-gray-200">
@@ -85,9 +88,6 @@ const ProjectPage = () => {
                         </ProjectBar>
                         <Terminal output={compilerData ?? ""} />
                     </div>
-                    {utilityBarOpen && (
-                        <div className="w-[var(--utilitybar-w)] bg-white">utilitybar</div>
-                    )}
                 </div>
             </div>
         </div>

@@ -35,3 +35,22 @@ export const updateProject = async (
     where,
   });
 };
+export const assignUserToProject=async(
+    {
+
+    projectId,colaboratorId
+    }:{
+    projectId:string,colaboratorId:string
+    }
+)=>{
+    console.log('repo ',projectId,colaboratorId)
+   
+    return await prisma.project.update({
+        where:{id:projectId},
+        data:{
+            colaborators:{connect:{
+                id:colaboratorId
+            }}
+        }
+    })
+}

@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
 
 type Props = {
@@ -7,21 +8,25 @@ type Props = {
     handleSaveFile: () => void;
     isAddUsersOpen: boolean;
     setAddUsersMenuOpen: Dispatch<SetStateAction<boolean>>;
+    setSelectedOption: Dispatch<SetStateAction<'project'|'option'>>;
 };
 const Navbar = ({
     handleRunCode,
     handleSaveFile,
     setAddUsersMenuOpen,
     isAddUsersOpen,
+    setSelectedOption
 }: Props) => {
     const [openMenu, setOpenMenu] = useState(false);
     const router = useRouter();
+    const ref=useRef(null)
+    useOutsideAlerter(ref,setOpenMenu)
     const { mutate: logout } = api.user.logout.useMutation({
         onSuccess: async () => {
             await router.push("/login");
         },
     });
-
+    
     const saveFile = () => {
         handleSaveFile();
         setOpenMenu(false);
@@ -32,8 +37,8 @@ const Navbar = ({
             className={`flex h-[var(--navbar-h)] w-full justify-between bg-secondary  text-sm text-white`}
         >
             <div className="flex items-center">
-                <div className="relative px-2 py-1 hover:bg-accent">
-                    <button className="" onClick={() => setOpenMenu(!openMenu)}>
+                <div ref={ref} className="relative px-2 py-1 hover:bg-accent">
+                    <button   className="" onClick={() => setOpenMenu(!openMenu)}>
                         Menu
                     </button>
                     {openMenu && (
@@ -45,10 +50,11 @@ const Navbar = ({
                                 onClick={() => {
                                     setOpenMenu(false);
                                     setAddUsersMenuOpen(!isAddUsersOpen);
+                                    setSelectedOption('option')
                                 }}
                                 className="whitespace-nowrap"
                             >
-                                Add user
+                                Manage Project
                             </button>
                             <button className="whitespace-nowrap">Show users</button>
                         </div>

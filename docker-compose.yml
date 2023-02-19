@@ -1,5 +1,23 @@
 version: '3'
 services:
+# demo-container-db:
+#     image: postgres:12
+#     mem_limit: 1536MB
+#     mem_reservation: 1G
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: password
+#     ports:
+#     - "5442:5432"
+#     volumes:
+#     - db-data:/var/lib/postgresql/data
+#   demo-pgadmin4:
+#     image: dpage/pgadmin4
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: admin@mail.com
+#       PGADMIN_DEFAULT_PASSWORD: password
+#     ports:
+#     - "8889:80"
   redis:
     image: redis:latest
     container_name: redis
@@ -9,3 +27,4 @@ services:
       - redis:/data
 volumes:
   redis:
+  # db-data:

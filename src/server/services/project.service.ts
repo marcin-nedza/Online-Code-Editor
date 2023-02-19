@@ -1,6 +1,7 @@
+import {User} from "@prisma/client";
 import {TRPCError} from "@trpc/server";
-import {ICreateProject,TUpadeteProjectSchema} from "../../schemas/project";
-import {createProject,findManyProjects,updateProject} from "../repository/project.repository";
+import {ICreateProject,TAssignUserToProject,TUpadeteProjectSchema} from "../../schemas/project";
+import {assignUserToProject, createProject,findManyProjects,updateProject} from "../repository/project.repository";
 import {findUniqueUser} from "./user.service";
 
 
@@ -23,4 +24,8 @@ export const getAllProject=async(userId:string)=>{
 
 export const saveProject=async(input:TUpadeteProjectSchema) =>{
     return await updateProject({id:input.id},input.content) 
+}
+export const assignUserToProjectService=async(input:{projectId:string,colaboratorId:string})=>{
+    console.log('INPUT',input)
+    return await assignUserToProject({colaboratorId:input.colaboratorId,projectId:input.projectId})
 }

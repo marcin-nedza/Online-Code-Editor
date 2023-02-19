@@ -27,7 +27,7 @@ const accessTokenCookieOptions: OptionsType = {
 
 export const registerHandler = async ({ input }: { input: ISignup }) => {
   try {
-    console.log("INPUT", input);
+    console.log("INPUT");
     const hashedPassword = await bcrypt.hash(input.password, 10);
     const user = await createUser({
       email: input.email,
