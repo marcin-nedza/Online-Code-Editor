@@ -1,4 +1,4 @@
-import { Prisma, Project } from "@prisma/client";
+import { Prisma, Project, Status } from "@prisma/client";
 import { ICreateProject } from "../../schemas/project";
 
 import { prisma } from "../db";
@@ -26,6 +26,13 @@ export const findManyProjects = async (
     select,
   });
 };
+export const findAssignedProjectByStatus=async(
+    {where}:{where:Prisma.ColaboratorsOnProjectWhereInput}
+)=>{
+    return await prisma.colaboratorsOnProject.findMany({
+        where
+    })
+}
 export const updateProject = async (
   where: Prisma.ProjectWhereUniqueInput,
   content: string
@@ -35,22 +42,42 @@ export const updateProject = async (
     where,
   });
 };
-export const assignUserToProject=async(
-    {
+export const assignUserToProject = async ({
+  projectId,
+  colaboratorId,
+}: {
+  projectId: string;
+  colaboratorId: string;
+}) => {
+  return await prisma.colaboratorsOnProject.create({
+    data: {
+      projectId,
+      userId: colaboratorId,
+      status: "PENDING",
+    },
+  });
+};
+export const findColaborators = async ({
+  where,
+}: {
+  where: Prisma.ColaboratorsOnProjectWhereUniqueInput;
+}) => {
 
-    projectId,colaboratorId
-    }:{
-    projectId:string,colaboratorId:string
-    }
-)=>{
-    console.log('repo ',projectId,colaboratorId)
-   
-    return await prisma.project.update({
-        where:{id:projectId},
-        data:{
-            colaborators:{connect:{
-                id:colaboratorId
-            }}
-        }
-    })
-}
+  return await prisma.colaboratorsOnProject.findUnique({
+    where,
+  });
+};
+export const changeColaboratorStatus = async ({
+  where,
+  status,
+}: {
+  where: Prisma.ColaboratorsOnProjectWhereUniqueInput;
+  status: Status;
+}) => {
+  return await prisma.colaboratorsOnProject.update({
+    where: where,
+    data: {
+      status,
+    },
+  });
+};

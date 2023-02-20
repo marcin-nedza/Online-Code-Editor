@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { Editor, Navbar, Sidebar, Spinner, Terminal } from "../../components";
 import ProjectBar from "../../components/ProjectBar";
+import ProjectPageProvider from "../../contexts/projectPageContext";
 import { useManageState } from "../../hooks/manageStates";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
@@ -57,8 +58,9 @@ const ProjectPage = () => {
     if (isProjectLoading) {
         return <Spinner />;
     }
-    console.log({isAddUsersOpen,selectedOption})
     return (
+        <ProjectPageProvider>
+
         <div className="flex w-screen bg-gray-200">
             <div className="flex flex-col">
                 <Navbar
@@ -91,6 +93,7 @@ const ProjectPage = () => {
                 </div>
             </div>
         </div>
+        </ProjectPageProvider>
     );
 };
 

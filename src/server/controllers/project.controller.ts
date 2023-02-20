@@ -117,23 +117,37 @@ export const updateProjectHandler = async (input: TUpadeteProjectSchema) => {
   }
 };
 export const assignUserToProjectHandler = async ({
-    projectId,
+  projectId,
   email,
 }: {
-        projectId:string
+  projectId: string;
   email: string;
 }) => {
   try {
     const colaborator = await findUniqueUser({ email: email });
+    if (!colaborator) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `User with email ${email} not found`,
+      });
+    }
     const project = await assignUserToProjectService({
       colaboratorId: colaborator.id,
-            projectId:projectId
+      projectId: projectId,
     });
+
     return {
       status: "success",
       data: project,
     };
   } catch (error) {
-    throw error;
+        if(error instanceof TRPCError) {
+            throw error
+        }else{
+            throw new TRPCError({
+                code:'INTERNAL_SERVER_ERROR',
+                message:'Failed to assign user to project'
+            })
+        }
   }
 };

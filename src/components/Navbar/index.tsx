@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useRef, useState } from "react";
+import {ProjectPageContext} from "../../contexts/projectPageContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
 
@@ -17,6 +18,7 @@ const Navbar = ({
     isAddUsersOpen,
     setSelectedOption
 }: Props) => {
+    const {}=useContext(ProjectPageContext)
     const [openMenu, setOpenMenu] = useState(false);
     const router = useRouter();
     const ref=useRef(null)

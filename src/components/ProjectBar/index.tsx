@@ -18,6 +18,7 @@ const ProjectBar = ({
   selectedOption,
   setSelectedOption,
 }: Props) => {
+  console.log("option", selectedOption);
   return (
     <div className="">
       <div className="">
@@ -37,22 +38,24 @@ const ProjectBar = ({
           </div>
           {isAddUserOpen && (
             <div
-              onClick={() => {
-                setSelectedOption("option");
-              }}
-              className={`flex h-full cursor-pointer items-center border-r border-dark-bg px-2 ${
+              className={` relative flex h-full cursor-pointer items-center border-r border-dark-bg px-2 ${
                 selectedOption === "option" ? "bg-accent" : "bg-light-bg"
               } hover:bg-accent`}
             >
-              <div className="">
+              <div
+                className="flex items-center w-full h-full"
+                onClick={() => {
+                  setSelectedOption("option");
+                }}
+              >
                 <p>Manage Project</p>
               </div>
               <div
                 onClick={() => {
-                  setAddUsersMenuOpen(false);
                   setSelectedOption("project");
+                  setAddUsersMenuOpen(false);
                 }}
-                className="flex justify-center w-4 ml-1 text-sm hover:bg-light-bg"
+                className="z-10 flex justify-center w-4 ml-1 text-sm hover:bg-light-bg"
               >
                 &#x2715;
               </div>
