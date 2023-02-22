@@ -1,15 +1,16 @@
 import {
-    assignUserToProjectSchema,
-    createProjectInputSchema, getOneProjectSchema,updateProjectSchema
+    assignUserToProjectSchema, changeColaboratorStatusSchema, createProjectInputSchema, getAssignedProjectByStatusSchema, getOneProjectSchema, updateProjectSchema
 } from "../../../schemas/project";
 import {
     assignUserToProjectHandler,
+    changeProjectStatusHandler,
     createProjectHandler,
+    getAllAssignedProjectsHandler,
     getAllProjectHandler,
     getOneProjectHandler,
     updateProjectHandler
 } from "../../controllers/project.controller";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const projectRouter = createTRPCRouter({
 
@@ -31,6 +32,14 @@ export const projectRouter = createTRPCRouter({
 
     assignUserToProject:publicProcedure
     .input(assignUserToProjectSchema)
-    .mutation(({input})=>assignUserToProjectHandler({email:input.email,projectId:input.projectId}))
+    .mutation(({input})=>assignUserToProjectHandler({email:input.email,projectId:input.projectId})),
+
+    getAssignedProjectByStatus:publicProcedure
+    .input(getAssignedProjectByStatusSchema)
+    .mutation(({input,ctx})=>getAllAssignedProjectsHandler({status:input.status,userId:ctx.user?.id as string})),
+
+    changeStatus:publicProcedure
+    .input(changeColaboratorStatusSchema)
+    .mutation(({input,ctx})=>changeProjectStatusHandler({projectId:input.projectId,status:input.status,userId:ctx.user!.id}))
 
 });

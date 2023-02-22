@@ -2,11 +2,13 @@ import { Status, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
   ICreateProject,
-  TAssignUserToProject,
-  TUpadeteProjectSchema,
+  TChangeStatus,
+  TGetAssignedProjects,
+  TUpdatedProject,
 } from "../../schemas/project";
 import {
   assignUserToProject,
+  changeColaboratorStatus,
   createProject,
   findAssignedProjectByStatus,
   findColaborators,
@@ -30,6 +32,7 @@ export const createProjectService = async (input: ICreateProject) => {
 export const getAllProject = async (userId: string) => {
   return await findManyProjects({ userId });
 };
+
 export const getAssignedProjectByStatus = async ({
   userId,
   status,
@@ -37,23 +40,21 @@ export const getAssignedProjectByStatus = async ({
   userId: string;
   status: Status;
 }) => {
-  return await findAssignedProjectByStatus({ where: { userId, status } });
-};
-export const saveProject = async (input: TUpadeteProjectSchema) => {
-  return await updateProject({ id: input.id }, input.content);
+  return await findAssignedProjectByStatus({ userId, status });
 };
 
-export const assignUserToProjectService = async (input: {
-  projectId: string;
-  colaboratorId: string;
-}) => {
+export const saveProject = async ({ content, id }: TUpdatedProject) => {
+  return await updateProject({ id }, content);
+};
+
+export const assignUserToProjectService = async ({
+  userId,
+  projectId,
+}: TGetAssignedProjects) => {
+  const collaboration = { projectId, userId };
+
   const isAssigned = await findColaborators({
-    where: {
-      userId_projectId: {
-        projectId: input.projectId,
-        userId: input.colaboratorId,
-      },
-    },
+    userId_projectId: collaboration,
   });
   if (isAssigned) {
     throw new TRPCError({
@@ -62,14 +63,44 @@ export const assignUserToProjectService = async (input: {
     });
   }
   try {
-    return await assignUserToProject({
-      colaboratorId: input.colaboratorId,
-      projectId: input.projectId,
-    });
+    return await assignUserToProject(collaboration);
   } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: "Failed to assign user to project",
+    });
+  }
+};
+
+export const changeColaboratorStatusService = async ({
+  projectId,
+  userId,
+  status,
+}: TChangeStatus) => {
+  try {
+    const project = await findColaborators({
+      userId_projectId: { projectId, userId },
+    });
+    if (!project) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Project not found",
+      });
+    }
+    return changeColaboratorStatus(
+      { userId_projectId: { projectId, userId } },
+      status
+    );
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Couldnt change project status",
     });
   }
 };

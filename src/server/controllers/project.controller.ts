@@ -5,14 +5,19 @@ import {
   ICreateProjectInput,
   IGetOneProjectSchema,
   TAssignUserToProject,
-  TUpadeteProjectSchema,
+  TGetAssignedProjects,
+  TGetAssignedProjectsByStatus,
+  TUpdatedProject,
+  TChangeStatus,
 } from "../../schemas/project";
 import { Context } from "../api/trpc";
 import { findUniqueProject } from "../repository/project.repository";
 import {
   assignUserToProjectService,
+  changeColaboratorStatusService,
   createProjectService,
   getAllProject,
+  getAssignedProjectByStatus,
   saveProject,
 } from "../services/project.service";
 import { findUniqueUser } from "../services/user.service";
@@ -63,6 +68,8 @@ export const getAllProjectHandler = async ({
       });
     }
     const projects = await getAllProject(user?.id);
+        const assingedProjects=await getAssignedProjectByStatus({userId:user.id,status:'ACCEPTED'})
+        console.log('assigned',assingedProjects)
     return {
       status: "success",
       data: projects as Project[],
@@ -71,6 +78,35 @@ export const getAllProjectHandler = async ({
     throw error;
   }
 };
+
+export const getAllAssignedProjectsHandler = async ({
+  userId,
+  status,
+}: TGetAssignedProjectsByStatus) => {
+  try {
+    const projects = await getAssignedProjectByStatus({ userId, status });
+    if (!projects) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Failed to fetch all projects",
+      });
+    }
+    return {
+      status: "success",
+      data: projects,
+    };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    } else {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch projects",
+      });
+    }
+  }
+};
+
 export const getOneProjectHandler = async ({
   input,
 }: {
@@ -92,7 +128,7 @@ export const getOneProjectHandler = async ({
     throw error;
   }
 };
-export const updateProjectHandler = async (input: TUpadeteProjectSchema) => {
+export const updateProjectHandler = async (input: TUpdatedProject) => {
   try {
     const project = await findUniqueProject({ id: input.id });
     if (!project) {
@@ -113,7 +149,14 @@ export const updateProjectHandler = async (input: TUpadeteProjectSchema) => {
       data: updatedProject,
     };
   } catch (error) {
-    throw error;
+    if (error instanceof TRPCError) {
+      throw error;
+    } else {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to update project",
+      });
+    }
   }
 };
 export const assignUserToProjectHandler = async ({
@@ -125,6 +168,7 @@ export const assignUserToProjectHandler = async ({
 }) => {
   try {
     const colaborator = await findUniqueUser({ email: email });
+
     if (!colaborator) {
       throw new TRPCError({
         code: "NOT_FOUND",
@@ -132,7 +176,7 @@ export const assignUserToProjectHandler = async ({
       });
     }
     const project = await assignUserToProjectService({
-      colaboratorId: colaborator.id,
+      userId: colaborator.id,
       projectId: projectId,
     });
 
@@ -141,13 +185,38 @@ export const assignUserToProjectHandler = async ({
       data: project,
     };
   } catch (error) {
-        if(error instanceof TRPCError) {
-            throw error
-        }else{
-            throw new TRPCError({
-                code:'INTERNAL_SERVER_ERROR',
-                message:'Failed to assign user to project'
-            })
-        }
+    if (error instanceof TRPCError) {
+      throw error;
+    } else {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to assign user to project",
+      });
+    }
+  }
+};
+
+export const changeProjectStatusHandler = async (input: TChangeStatus) => {
+  try {
+    const project = await changeColaboratorStatusService(input);
+    if (!project) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Project not found",
+      });
+    }
+    return {
+      status: "success",
+      data: project,
+    };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    } else {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to change project status",
+      });
+    }
   }
 };

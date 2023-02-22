@@ -7,18 +7,12 @@ import { api } from "../../utils/api";
 type Props = {
     handleRunCode: () => void;
     handleSaveFile: () => void;
-    isAddUsersOpen: boolean;
-    setAddUsersMenuOpen: Dispatch<SetStateAction<boolean>>;
-    setSelectedOption: Dispatch<SetStateAction<'project'|'option'>>;
 };
 const Navbar = ({
     handleRunCode,
     handleSaveFile,
-    setAddUsersMenuOpen,
-    isAddUsersOpen,
-    setSelectedOption
 }: Props) => {
-    const {}=useContext(ProjectPageContext)
+    const {isAddUserOpen,setAddUserMenuOpen,setSelectedOption}=useContext(ProjectPageContext)
     const [openMenu, setOpenMenu] = useState(false);
     const router = useRouter();
     const ref=useRef(null)
@@ -51,7 +45,7 @@ const Navbar = ({
                             <button
                                 onClick={() => {
                                     setOpenMenu(false);
-                                    setAddUsersMenuOpen(!isAddUsersOpen);
+                                    setAddUserMenuOpen(!isAddUserOpen);
                                     setSelectedOption('option')
                                 }}
                                 className="whitespace-nowrap"

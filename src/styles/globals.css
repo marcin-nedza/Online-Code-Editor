@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root{
-    --sidebar-w:100px;
+    --sidebar-w:110px;
     --sidebar-title-h:2rem;
     --navbar-h:34px;
     --terminal-h:140px;

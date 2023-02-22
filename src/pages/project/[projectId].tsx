@@ -1,23 +1,20 @@
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Editor, Navbar, Sidebar, Spinner, Terminal } from "../../components";
 import ProjectBar from "../../components/ProjectBar";
-import ProjectPageProvider from "../../contexts/projectPageContext";
-import { useManageState } from "../../hooks/manageStates";
+import ProjectPageProvider, { ProjectPageContext } from "../../contexts/projectPageContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
 
 const ProjectPage = () => {
     const router = useRouter();
-    const { isAddUsersOpen, setAddUsersMenuOpen } = useManageState();
+    const {setAddUserMenuOpen}=useContext(ProjectPageContext)
     const [code, setCode] = useState<string>("");
-    const [selectedOption, setSelectedOption] = useState<'project'|'option'>("project");
     const { projectId } = router.query;
     const wrapperRef = useRef(null);
-    useOutsideAlerter(wrapperRef, setAddUsersMenuOpen);
+    useOutsideAlerter(wrapperRef, setAddUserMenuOpen);
     const {
         mutate: updateProject,
-        data: updatedProject,
         isLoading,
     } = api.project.updateProject.useMutation();
     const {
@@ -66,19 +63,12 @@ const ProjectPage = () => {
                 <Navbar
                     handleSaveFile={handleSubmit}
                     handleRunCode={handleRunCode}
-                    isAddUsersOpen={isAddUsersOpen}
-                    setAddUsersMenuOpen={setAddUsersMenuOpen}
-                    setSelectedOption={setSelectedOption}
                 />
                 <div className="flex">
                     <Sidebar />
                     <div className="flex flex-col">
                         <ProjectBar
                             title={data?.data.title}
-                            isAddUserOpen={isAddUsersOpen}
-                            setAddUsersMenuOpen={setAddUsersMenuOpen}
-                            selectedOption={selectedOption}
-                            setSelectedOption={setSelectedOption}
                             >
 
                         <div className="flex bg-gray-200">

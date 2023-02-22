@@ -1,24 +1,17 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { useContext } from "react";
+import { ProjectPageContext } from "../../contexts/projectPageContext";
 import ManageProject from "./ManageProject";
 
 type Props = {
   title: string;
-  isAddUserOpen: boolean;
-  setAddUsersMenuOpen: Dispatch<SetStateAction<boolean>>;
   children: React.ReactNode;
-  selectedOption: "project" | "option";
-  setSelectedOption: Dispatch<SetStateAction<"project" | "option">>;
 };
 
 const ProjectBar = ({
   title,
-  isAddUserOpen,
-  setAddUsersMenuOpen,
   children,
-  selectedOption,
-  setSelectedOption,
 }: Props) => {
-  console.log("option", selectedOption);
+    const {isAddUserOpen,setAddUserMenuOpen,selectedOption,setSelectedOption}=useContext(ProjectPageContext)
   return (
     <div className="">
       <div className="">
@@ -53,7 +46,7 @@ const ProjectBar = ({
               <div
                 onClick={() => {
                   setSelectedOption("project");
-                  setAddUsersMenuOpen(false);
+                  setAddUserMenuOpen(false);
                 }}
                 className="z-10 flex justify-center w-4 ml-1 text-sm hover:bg-light-bg"
               >
