@@ -1,47 +1,63 @@
 import { EditorState } from "@codemirror/state";
-import { EditorView,Tooltip,showTooltip } from "@codemirror/view";
+import { EditorView, Tooltip, showTooltip } from "@codemirror/view";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { ROOM_ACTION } from "../../constants/events";
 import {
-    connectToRoom,
-    updateContentEmitter,
-    userConnectedListener
+  connectToRoom,
+  updateContentEmitter,
+  userConnectedListener
 } from "../../lib/socket/socketControllers";
 import { TViewState } from "../../schemas/socket";
 import Spinner from "../Spinner";
 import { basicExtensions } from "./basicExtensions";
 import { useSaveProject } from "./keyBindings";
 
-import {StateField,Transaction} from "@codemirror/state"
+import { StateField, Transaction, StateEffect } from "@codemirror/state"
 
 let socket: Socket;
 
 const cursorTooltipField = StateField.define<readonly Tooltip[]>({
-  create:state=> getCursorTooltips(state,-1),
+  create: getCursorTooltips,
 
   update(tooltips, tr) {
-      
-        console.log('99999',tr)
+
+    // console.log('trans', tr)
+    // console.log('tooltips', tooltips)
     if (!tr.docChanged && !tr.selection) return tooltips
-        console.log('ATU')
-    const pos = tr.changes.length ? tr.changes.mapPos(tooltips[0].pos) : tooltips[0].pos // adjust position for changes in the document
-    return getCursorTooltips(tr.state,pos)
+    const updated = getCursorTooltips(tr.state)
+
+    updated.forEach((tooltip, i) => {
+      console.log('KRUAW', tooltip)
+      const newPos = 1
+      let { pos } = tooltip
+      pos = newPos
+      showTooltip.from(cursorTooltipField)
+    })
+    // return getCursorTooltips(tr.state)
+    return updated
   },
 
-  provide: f => showTooltip.computeN([f], state => state.field(f))
+  provide: f => showTooltip.computeN([f], state => {
+    console.log('TOOLTO', f)
+    console.log('TOOLTO2', state.field)
+    console.log('TOOLTO3', state.field(f))
+    return state.field(f)
+  })
 })
 
-function getCursorTooltips(state: EditorState,position:number): readonly Tooltip[] {
-     
+
+
+function getCursorTooltips(state: EditorState): readonly Tooltip[] {
+
   return state.selection.ranges
     .filter(range => range.empty)
     .map(range => {
       let line = state.doc.lineAt(range.head)
-      let text ='dupa' 
+      let text = 'dupa'
       return {
-        pos:0,
+        pos: 2,
         above: true,
         strictSide: true,
         arrow: true,
@@ -49,11 +65,12 @@ function getCursorTooltips(state: EditorState,position:number): readonly Tooltip
           let dom = document.createElement("div")
           dom.className = "cm-tooltip-cursor"
           dom.textContent = text
-          return {dom}
+          return { dom }
         }
       }
     })
 }
+
 const Editor = ({
   code,
   setCode,
@@ -63,7 +80,7 @@ const Editor = ({
 }) => {
   const editor = useRef<HTMLInputElement>();
   const router = useRouter();
-  const  projectId  = router.query?.projectId ?? ''
+  const projectId = router.query?.projectId ?? ''
 
   const { myKeymap, showElement, setShowElement, isLoading } =
     useSaveProject(projectId);
@@ -75,11 +92,11 @@ const Editor = ({
       basicExtensions,
       myKeymap,
       EditorView.updateListener.of((v) => {
-                let pos=v.state.selection.main.head
-                socket.emit('POSITION',{pos,projectId})
+        let pos = v.state.selection.main.head
+        socket.emit('POSITION', { pos, projectId })
         if (v.docChanged) {
           const data = {
-                        line:v.state.selection.main.head,
+            line: v.state.selection.main.head,
             len: view.state.doc.length,
             text: view.state.doc.toString(),
             projectId,
@@ -88,7 +105,7 @@ const Editor = ({
           socket.emit(ROOM_ACTION.CODE_CHANGED, data);
         }
       }),
-cursorTooltipField
+      cursorTooltipField
     ];
 
 
@@ -101,17 +118,17 @@ cursorTooltipField
       parent: editor.current,
     });
 
-        socket.on("SENDPOS",(data)=>{
-            view.dispatch({
-                
-            })
-            console.log('SOCKET POS',data)
-        })
+    socket.on("SENDPOS", (data) => {
+      view.dispatch({
+
+      })
+      console.log('SOCKET POS', data)
+    })
     if (!view) return;
     if (router.isReady && projectId) {
       connectToRoom(socket, projectId);
       const update = (updatedData: TViewState) => {
-                setCode(updatedData.text);
+        setCode(updatedData.text);
         view.setState(
           EditorState.create({ doc: updatedData.text, extensions: extensions })
         );
@@ -125,7 +142,7 @@ cursorTooltipField
     };
   }, [projectId, router.isReady]);
 
-    //function to show Save component for 3500ms
+  //function to show Save component for 3500ms
   useEffect(() => {
     setTimeout(() => {
       setShowElement(false);
