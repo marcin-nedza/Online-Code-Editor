@@ -32,8 +32,9 @@ const cursorTooltipField = StateField.define<readonly Tooltip[]>({
       console.log('KRUAW', tooltip)
       const newPos = 1
       let { pos } = tooltip
-      pos = newPos
-      showTooltip.from(cursorTooltipField)
+      tooltip.pos = newPos
+      return
+
     })
     // return getCursorTooltips(tr.state)
     return updated
@@ -57,7 +58,7 @@ function getCursorTooltips(state: EditorState): readonly Tooltip[] {
       let line = state.doc.lineAt(range.head)
       let text = 'dupa'
       return {
-        pos: 2,
+        pos: 3,
         above: true,
         strictSide: true,
         arrow: true,
