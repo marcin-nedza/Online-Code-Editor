@@ -1,7 +1,7 @@
 import { EditorState } from "@codemirror/state";
 import { EditorView,Tooltip,showTooltip } from "@codemirror/view";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { ROOM_ACTION } from "../../constants/events";
 import {
@@ -14,34 +14,30 @@ import Spinner from "../Spinner";
 import { basicExtensions } from "./basicExtensions";
 import { useSaveProject } from "./keyBindings";
 
-import {StateField,Transaction} from "@codemirror/state"
+import {StateField,Transaction,StateEffect} from "@codemirror/state"
+import {api} from "../../utils/api";
 
 let socket: Socket;
 
+
 const cursorTooltipField = StateField.define<readonly Tooltip[]>({
-  create:state=> getCursorTooltips(state,-1),
-
+  create: state => getCursorTooltips(state, -1),
   update(tooltips, tr) {
-      
-        console.log('99999',tr)
-    if (!tr.docChanged && !tr.selection) return tooltips
-        console.log('ATU')
-    const pos = tr.changes.length ? tr.changes.mapPos(tooltips[0].pos) : tooltips[0].pos // adjust position for changes in the document
-    return getCursorTooltips(tr.state,pos)
+    if (!tr.docChanged && !tr.selection) return tooltips;
+    const pos = tr.changes.length ? tr.changes.mapPos(tooltips[0].pos) : tooltips[0].pos;
+    return getCursorTooltips(tr.state, pos);
   },
+  provide: f => showTooltip.computeN([f], state => state.field(f)),
+});
 
-  provide: f => showTooltip.computeN([f], state => state.field(f))
-})
-
-function getCursorTooltips(state: EditorState,position:number): readonly Tooltip[] {
-     
+function getCursorTooltips(state: EditorState, position: number): readonly Tooltip[] {
   return state.selection.ranges
     .filter(range => range.empty)
     .map(range => {
       let line = state.doc.lineAt(range.head)
-      let text ='dupa' 
+      let text = 'dupa';
       return {
-        pos:0,
+        pos: position,
         above: true,
         strictSide: true,
         arrow: true,
@@ -49,7 +45,7 @@ function getCursorTooltips(state: EditorState,position:number): readonly Tooltip
           let dom = document.createElement("div")
           dom.className = "cm-tooltip-cursor"
           dom.textContent = text
-          return {dom}
+          return { dom }
         }
       }
     })
@@ -64,10 +60,55 @@ const Editor = ({
   const editor = useRef<HTMLInputElement>();
   const router = useRouter();
   const  projectId  = router.query?.projectId ?? ''
-
+    const userId=localStorage.getItem('id')
+    const [position, setPosition] = useState(0)
+    console.log('STATE POS',position)
+const blabla='BLABLA'
   const { myKeymap, showElement, setShowElement, isLoading } =
     useSaveProject(projectId);
 
+
+const testCursorField = StateField.define<readonly Tooltip[]>({
+    create:state=> {
+            console.log('here')
+           return  getTestToolips(state,position)
+        },
+
+    update(tooltips, tr) {
+            console.log('TU')
+        if (!tr.docChanged && !tr.selection) {
+
+            console.log('TAM')
+                return tooltips
+            }
+            console.log('SIAM')
+        return getTestToolips(tr.state,position)
+    },
+
+    provide: f => showTooltip.computeN([f], state => state.field(f))
+})
+function getTestToolips(state: EditorState,position:number): readonly Tooltip[] {
+        console.log('toooltip')
+    return state.selection.ranges
+        .filter(range => range.empty)
+        .map(range => {
+            let line = state.doc.lineAt(range.head)
+            let text = 'TEST'
+            
+            return {
+                pos: position,
+                above: true,
+                strictSide: true,
+                arrow: true,
+                create: () => {
+                    let dom = document.createElement("div")
+                    dom.className = "cm-tooltip-cursor"
+                    dom.textContent = blabla
+                    return {dom}
+                }
+            }
+        })
+}
   useEffect(() => {
     fetch("/api/socket");
     socket = io();
@@ -75,8 +116,9 @@ const Editor = ({
       basicExtensions,
       myKeymap,
       EditorView.updateListener.of((v) => {
-                let pos=v.state.selection.main.head
-                socket.emit('POSITION',{pos,projectId})
+                const pos=v.state.selection.main.head
+                console.log('before emit')
+                socket.emit('POSITION',{pos,projectId,userId})
         if (v.docChanged) {
           const data = {
                         line:v.state.selection.main.head,
@@ -88,7 +130,20 @@ const Editor = ({
           socket.emit(ROOM_ACTION.CODE_CHANGED, data);
         }
       }),
-cursorTooltipField
+cursorTooltipField,
+            EditorView.domEventHandlers({
+      mousedown(event, view) {
+          const position = view.posAtCoords({ x: event.clientX, y: event.clientY });
+                    console.log('mouse',position)
+          if (position) {
+            const transaction = view.state.update({
+    effects: cursorTooltipField.update({ position }),
+            });
+            view.dispatch(transaction);
+          }
+        },
+            })
+            // testCursorField
     ];
 
 
@@ -101,15 +156,15 @@ cursorTooltipField
       parent: editor.current,
     });
 
-        socket.on("SENDPOS",(data)=>{
-            view.dispatch({
-                
-            })
-            console.log('SOCKET POS',data)
-        })
+ 
     if (!view) return;
     if (router.isReady && projectId) {
       connectToRoom(socket, projectId);
+            socket.on("SENDPOS",(data)=>{
+                if(data.userId!=userId){
+                setPosition(data.pos)
+                }
+            })
       const update = (updatedData: TViewState) => {
                 setCode(updatedData.text);
         view.setState(
