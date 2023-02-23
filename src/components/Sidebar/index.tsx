@@ -20,7 +20,6 @@ const Sidebar = () => {
   const handleChangePendingProject = ({ projectId, status }: TChangeStatus) => {
     changeStatus({ projectId, status });
   };
-console.log(projects?.data.length)
   useEffect(() => {
     mutate({ status: "PENDING" });
     findAcceptedProjects({ status: "ACCEPTED" });
@@ -64,7 +63,7 @@ console.log(projects?.data.length)
             <p className="">Invitations</p>
           </div>
           <div className="pt-2 text-start">
-            {isProjectsSuccess && projects.data.length>0 &&
+            {isProjectsSuccess && projects.data.length > 0 &&
               projects.data.map((el) => (
                 <SingleProject
                   key={el.project.id}
