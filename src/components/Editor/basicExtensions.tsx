@@ -30,5 +30,21 @@ const basicExtensions = [
   solarizedDark,
   cursorTooltipBaseTheme
 ];
+const TooltipDisplay =({pos,displayed,arrow,text}:{pos:number,text:string,displayed:boolean,arrow:boolean})=>{
+    return {
 
-export { basicExtensions, cursorTooltipBaseTheme };
+          pos,
+          above:true,
+          strictSide: true,
+          arrow,
+          create: () => {
+            let dom = document.createElement("div");
+            dom.className =displayed? "cm-tooltip-cursor":''
+            dom.textContent =displayed? text: ''
+            return {
+              dom,
+            };
+          },
+    }
+}
+export { basicExtensions, cursorTooltipBaseTheme ,TooltipDisplay};
