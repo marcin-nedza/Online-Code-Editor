@@ -4,16 +4,6 @@ import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { solarizedDark } from "./darkstyle";
 
-const basicExtensions = [
-  keymap.of(defaultKeymap),
-  basicSetup,
-  javascript({
-    jsx: true,
-    typescript: true,
-  }),
-  lineNumbers(),
-  solarizedDark,
-];
 const cursorTooltipBaseTheme = EditorView.baseTheme({
   ".cm-tooltip.cm-tooltip-cursor": {
     backgroundColor: "#66b",
@@ -29,4 +19,16 @@ const cursorTooltipBaseTheme = EditorView.baseTheme({
     }
   }
 })
-export { basicExtensions,cursorTooltipBaseTheme  };
+const basicExtensions = [
+  keymap.of(defaultKeymap),
+  basicSetup,
+  javascript({
+    jsx: true,
+    typescript: true,
+  }),
+  lineNumbers(),
+  solarizedDark,
+  cursorTooltipBaseTheme
+];
+
+export { basicExtensions, cursorTooltipBaseTheme };
