@@ -69,7 +69,6 @@ export const getAllProjectHandler = async ({
     }
     const projects = await getAllProject(user?.id);
         const assingedProjects=await getAssignedProjectByStatus({userId:user.id,status:'ACCEPTED'})
-        console.log('assigned',assingedProjects)
     return {
       status: "success",
       data: projects as Project[],

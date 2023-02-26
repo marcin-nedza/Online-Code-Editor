@@ -1,15 +1,10 @@
-import { EditorState } from "@codemirror/state";
-import {
-  EditorView,
-  Tooltip,
-  showTooltip,
-  TooltipView,
-  getTooltip,
-} from "@codemirror/view";
+import { EditorState, StateField, Compartment } from "@codemirror/state";
+import { EditorView, showTooltip, Tooltip } from "@codemirror/view";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { ROOM_ACTION } from "../../constants/events";
+import { ProjectPageContext } from "../../contexts/projectPageContext";
 import {
   connectToRoom,
   updateContentEmitter,
@@ -17,9 +12,13 @@ import {
 } from "../../lib/socket/socketControllers";
 import { TViewState } from "../../schemas/socket";
 import Spinner from "../Spinner";
-import { basicExtensions, TooltipDisplay } from "./basicExtensions";
+import {
+  basicExtensions,
+  cursorTooltipBaseThemeHidden,
+  cursorTooltipBaseTheme,
+  TooltipDisplay,
+} from "./basicExtensions";
 import { useSaveProject } from "./keyBindings";
-import { StateField, Transaction, StateEffect } from "@codemirror/state";
 
 let socket: Socket;
 
@@ -37,10 +36,9 @@ const Editor = ({
   const [position, setPosition] = useState(0);
   const [name, setName] = useState("");
   const [viewTooltip, setViewTooltip] = useState(false);
-  console.log("view", viewTooltip);
-
   const { myKeymap, showElement, setShowElement, isLoading } =
     useSaveProject(projectId);
+  console.log("POSITION", position);
 
   const cursorTooltipField = StateField.define<readonly Tooltip[]>({
     // create: getCursorTooltips,
@@ -53,7 +51,6 @@ const Editor = ({
       const updated = getCursorTooltips(tr.state);
 
       updated.forEach((tooltip) => {
-        console.log("asda", position);
         tooltip.pos = position;
         return;
       });
@@ -65,27 +62,41 @@ const Editor = ({
         return state.field(f);
       }),
   });
-  console.log("username", name);
   function getCursorTooltips(state: EditorState): readonly Tooltip[] {
     return state.selection.ranges
       .filter((range) => range.empty)
       .map((range) => {
         let line = state.doc.lineAt(range.head);
         let text = name;
-        return !viewTooltip
-          ? TooltipDisplay({
-              pos: position,
-              arrow: true,
-              displayed: true,
-              text,
-            })
-          : TooltipDisplay({
-              pos: position,
-              arrow: false,
-              displayed: false,
-              text: "",
-            });
+        return TooltipDisplay({
+          pos: position,
+          arrow: true,
+          displayed: true,
+          text,
+        });
       });
+  }
+  //TODO: keep track of users position on server
+  const cursorTooltipBaseTheme = EditorView.baseTheme({
+    ".cm-tooltip.cm-tooltip-cursor": {
+      backgroundColor: "#66b",
+      color: "white",
+      border: "none",
+      padding: "2px 7px",
+      borderRadius: "4px",
+      "& .cm-tooltip-arrow:before": {
+        borderTopColor: "#66b",
+      },
+      "& .cm-tooltip-arrow:after": {
+        borderTopColor: "transparent",
+      },
+    },
+  });
+  let theme = new Compartment();
+  function changeTheme(view: EditorView, bastheme) {
+    view.dispatch({
+      effects: theme.reconfigure(bastheme),
+    });
   }
 
   useEffect(() => {
@@ -95,23 +106,16 @@ const Editor = ({
     const extensions = [
       basicExtensions,
       myKeymap,
-      // EditorView.domEventHandlers.of({})
-      EditorView.domEventHandlers({}),
+      theme.of(cursorTooltipBaseTheme),
       EditorView.updateListener.of((v) => {
         const pos = v.state.selection.main.head;
-
-        socket.emit("POSITION", {
-          pos,
-          projectId,
-          userId,
-          username: localStorage.getItem("username"),
-        });
-        console.log("UGA", v.view.hasFocus);
-        if (!v.view.hasFocus) {
-          setViewTooltip(false);
-        }
         if (v.view.hasFocus) {
-          setViewTooltip(true);
+          socket.emit("POSITION", {
+            pos,
+            projectId,
+            userId,
+            username: localStorage.getItem("username"),
+          });
         }
 
         if (v.docChanged) {
@@ -140,8 +144,9 @@ const Editor = ({
     });
 
     if (!view) return;
-    if (router.isReady && projectId) {
-      connectToRoom(socket, projectId);
+    if (router.isReady && projectId && userId) {
+      console.log("projectid", projectId);
+      connectToRoom({ socket, projectId, userId });
       socket.on("SENDPOS", (data) => {
         if (data.userId != userId) {
           setPosition(data.pos);

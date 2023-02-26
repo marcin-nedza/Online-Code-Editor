@@ -2,7 +2,8 @@ import {z} from "zod";
 
 export const usersSchema=z.object({
 socketId:z.string(),
-    username:z.string()
+    // username:z.string(),
+    userId:z.string()
 })
 export const userDataConnect=z.object({
     username:z.string(),
