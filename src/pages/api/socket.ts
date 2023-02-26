@@ -25,7 +25,7 @@ codeChangesListener(socket,io)
 
       // });
       socket.on("POSITION", (data) => {
-        socket.broadcast.emit("SENDPOS", data);
+        socket.to(data.projectId).emit("SENDPOS", data);
                 const isPresent=users.get(data.userId)
         if(isPresent){
                     users.set(data.userId,{

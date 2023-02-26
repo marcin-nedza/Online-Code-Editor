@@ -1,4 +1,9 @@
-import { EditorState, StateField, Compartment } from "@codemirror/state";
+import {
+  EditorState,
+  StateField,
+  Compartment,
+  Extension,
+} from "@codemirror/state";
 import { EditorView, showTooltip, Tooltip } from "@codemirror/view";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
@@ -7,6 +12,7 @@ import { ROOM_ACTION } from "../../constants/events";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
 import {
   connectToRoom,
+  getPositionListener,
   updateContentEmitter,
   userConnectedListener,
 } from "../../lib/socket/socketControllers";
@@ -20,14 +26,14 @@ import {
 } from "./basicExtensions";
 import { useSaveProject } from "./keyBindings";
 
-let socket: Socket;
-
 const Editor = ({
   code,
   setCode,
+  socket,
 }: {
   code: string;
   setCode: (val: string) => void;
+  socket: Socket;
 }) => {
   const editor = useRef<HTMLInputElement>();
   const router = useRouter();
@@ -38,8 +44,7 @@ const Editor = ({
   const [viewTooltip, setViewTooltip] = useState(false);
   const { myKeymap, showElement, setShowElement, isLoading } =
     useSaveProject(projectId);
-  console.log("POSITION", position);
-
+  console.log({ position, name });
   const cursorTooltipField = StateField.define<readonly Tooltip[]>({
     // create: getCursorTooltips,
     create(view) {
@@ -93,20 +98,18 @@ const Editor = ({
     },
   });
   let theme = new Compartment();
-  function changeTheme(view: EditorView, bastheme) {
+  function changeTheme(view: EditorView, bastheme: Extension) {
     view.dispatch({
       effects: theme.reconfigure(bastheme),
     });
   }
+  const cond = name.length > 0;
+  console.log("COND", cond);
 
   useEffect(() => {
-    fetch("/api/socket");
-    socket = io();
-
     const extensions = [
       basicExtensions,
       myKeymap,
-      theme.of(cursorTooltipBaseTheme),
       EditorView.updateListener.of((v) => {
         const pos = v.state.selection.main.head;
         if (v.view.hasFocus) {
@@ -142,24 +145,25 @@ const Editor = ({
       state: startState,
       parent: editor.current,
     });
-
+    if (cond) {
+      console.log("ASDASDASD");
+      changeTheme(view, cursorTooltipBaseTheme);
+    }
     if (!view) return;
     if (router.isReady && projectId && userId) {
-      console.log("projectid", projectId);
-      connectToRoom({ socket, projectId, userId });
-      socket.on("SENDPOS", (data) => {
-        if (data.userId != userId) {
-          setPosition(data.pos);
-          setName(data.username);
-        }
+      getPositionListener({
+        socket,
+        setNameCb: setName,
+        setPositionCb: setPosition,
       });
+      changeTheme(view, cursorTooltipBaseTheme);
       const update = (updatedData: TViewState) => {
         setCode(updatedData.text);
         view.setState(
           EditorState.create({ doc: updatedData.text, extensions: extensions })
         );
       };
-      userConnectedListener(socket);
+      // userConnectedListener(socket);
 
       updateContentEmitter(socket, update);
     }
