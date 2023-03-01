@@ -1,59 +1,95 @@
 
-const code = `
+const code = {
+  title: 'code',
+  content: `
     function bla() {
 {
 
 content bla
 }
 }}
-`;
 
-//zliczaj brackety aby znalezc zamykajacy
-// args = array
-// bierzemy array, dzielismy go
-// szukamy slow klucz
-// jak jest slowo klucz to sprawdzamy index bracket otwierajacego
-// sparwdzamy indeks brakcet zamykajacego
-// dodajeym do odpowiedniej mapy nazwe i definicje
+
+export default bla;
+
+`}
+const code2 = {
+  title: 'code2',
+  content: `
+import sratata from ('./sratata')
+const cosik=()=>{
+contnasdanisd
+}
+`}
+
+const code3 = {
+  title: 'code3',
+  content: `
+  import bla from ("./bla")
+
+    function sratata() {
+{
+
+content bla
+}
+}}
+
+
+export default sratata;
+
+`}
+const code4 = {
+  title: 'code4',
+  content: `
+    function end() {
+{
+
+content bla
+}
+}}
+
+
+export default end;
+
+`}
+//stworz klase glowna?
+//plik configuracyjny albo opcjew edytorze -> ktory jest main
+//stworz array referencji do plikow
+//dla kazdego pliku sprawdz content
+//sprawdz importy i eksporty i dodaj nazyw zmiennych, funckji do odpowiednich Map 
+//type Map={name:string,{originFile:string}
+//sprawdzaj jakie sa importy
+//sprawdzaj sciezke
+//dodaj do array of dependency, ktore okresla kolejnsoc wklejania
 function splitString(text) {
   return text.split(/\s/).filter((e) => e != "");
 }
+console.log(splitString(code.content))
+let mapOfExports = new Map()
+let mapOfImports = new Map()
 
-function lookForKeyword(arr, keyword) {
-  const indexes = [];
+function lookForExportOrImport(arr, title) {
   arr.map((el, i) => {
-    if (el === keyword) {
-      indexes.push(i); }
-  });
-  return indexes;
+    if (el === 'export') {
+      mapOfExports.set(arr[i + 2], { originFile: title })
+    }
+    if (el === 'import') {
+      mapOfImports.set(arr[i + 1], { originFile: title, targetFile: arr[i + 3].replace(/[('")]/g, "") })
+    }
+  })
 }
-function ifStrHasBrakcet(str, bracket) {
-  if (str.includes(bracket)) {
-    return true;
-  }
-  return false;
+function findWhereFunctionIsExported(functionName) {
+
 }
-function getInsideContent(arr, startIndex) {
-  let counter = 0;
-  for (let i = startIndex + 1; i < arr.length; i++) {
-    console.log(arr[i]);
-    if(ifStrHasBrakcet(arr[i], '{')){
-            counter++;
-        }
-    if(ifStrHasBrakcet(arr[i], '}')){
-            counter--;
-        }
-  }
-    console.log('cccc',counter)
+function main(arraayOfFiles) {
+  //get all files
+  arraayOfFiles.map(el => {
+    lookForExportOrImport(splitString(el.content), el.title)
+  })
+  console.log('exports', mapOfExports)
+  console.log('imports', mapOfImports)
 }
-export default function mapCodeString(code) {
-  const codeArray = splitString(code);
-  // console.log(codeArray)
-  const functionIndexes = lookForKeyword(codeArray, "function");
-  // console.log(functionIndexes)
-  functionIndexes.map((el) => {
-    // console.log('ASDASD',ifStrHasBrakcet(codeArray[el + 1], '{'))
-    getInsideContent(codeArray, el);
-  });
-}
-mapCodeString(code);
+
+main([code, code2, code3, code4])
+const str = '(asdasd)'
+console.log(str.replace(/[()]/g, ""))
