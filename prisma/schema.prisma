@@ -23,7 +23,7 @@ model User {
     // assigned_projects Project[]               @relation("ColaboratorsOnProject")
     colaborations     ColaboratorsOnProject[]
 }
-
+//TODO: CHANGE PROJECT TO FILE
 model Project {
     id            String                  @id @default(uuid())
     title         String
@@ -32,6 +32,14 @@ model Project {
     userId        String
     // colaborators  User[]                  @relation("ColaboratorsOnProject")
     colaborations ColaboratorsOnProject[]
+    files File[]
+}
+model File {
+    id            String                  @id @default(uuid())
+    title         String
+    content       String?
+    projectId String
+    projects Project        @relation(fields:[projectId],references: [id])
 }
 
 model ColaboratorsOnProject {

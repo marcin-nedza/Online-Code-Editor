@@ -1,3 +1,6 @@
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { spawn } from "child_process";
 import { TCode } from "../../schemas/code";
 
@@ -27,3 +30,8 @@ export const runCodeController = (input: TCode): Promise<string> => {
     });
   });
 };
+export const createTempFiles=(files:TCode[])=>{
+
+    const tempFolder = path.join(os.tmpdir(),'coeditor')
+
+}

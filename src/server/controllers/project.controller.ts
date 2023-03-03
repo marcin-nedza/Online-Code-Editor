@@ -71,7 +71,7 @@ export const getAllProjectHandler = async ({
         const assingedProjects=await getAssignedProjectByStatus({userId:user.id,status:'ACCEPTED'})
     return {
       status: "success",
-      data: projects as Project[],
+      data: projects ,
     };
   } catch (error) {
     throw error;
@@ -127,6 +127,7 @@ export const getOneProjectHandler = async ({
     throw error;
   }
 };
+//TODO: change this to file
 export const updateProjectHandler = async (input: TUpdatedProject) => {
   try {
     const project = await findUniqueProject({ id: input.id });

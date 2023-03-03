@@ -13,6 +13,7 @@ import {
   findAssignedProjectByStatus,
   findColaborators,
   findManyProjects,
+  findUniqueProject,
   updateProject,
 } from "../repository/project.repository";
 import { findUniqueUser } from "./user.service";
@@ -32,7 +33,9 @@ export const createProjectService = async (input: ICreateProject) => {
 export const getAllProject = async (userId: string) => {
   return await findManyProjects({ userId });
 };
-
+export const findUniqueProjectService=async(projectId:string) =>{
+    return await findUniqueProject({id:projectId})
+}
 export const getAssignedProjectByStatus = async ({
   userId,
   status,
@@ -43,6 +46,7 @@ export const getAssignedProjectByStatus = async ({
   return await findAssignedProjectByStatus({ userId, status });
 };
 
+//TODO: change this to file
 export const saveProject = async ({ content, id }: TUpdatedProject) => {
   return await updateProject({ id }, content);
 };

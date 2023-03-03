@@ -2,7 +2,7 @@ import { Prisma, Project, Status } from "@prisma/client";
 import { ICreateProject } from "../../schemas/project";
 
 import { prisma } from "../db";
-
+type ProjectResult=Prisma.ProjectInclude
 export const createProject = (data: ICreateProject) => {
   return prisma.project.create({ data });
 };
@@ -23,17 +23,19 @@ export const findManyProjects = async (
 ) => {
   return await prisma.project.findMany({
     where,
-    select,
-    }) as Project[]
+    // select,
+        include:{files:true}
+    })
 };
 export const findAssignedProjectByStatus=async(
     where:Prisma.ColaboratorsOnProjectWhereInput
 )=>{
     return await prisma.colaboratorsOnProject.findMany({
-        where,include:{project:true}
+        where,include:{project:{include:{files:true}}}
     })
 }
 
+//TODO: change to file
 export const updateProject = async (
   where: Prisma.ProjectWhereUniqueInput,
   content: string

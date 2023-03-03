@@ -3,7 +3,6 @@ import {SignJWT} from "jose";
 import {nanoid} from "nanoid";
 import { ISignup } from "../../schemas/auth";
 import { prisma } from "../db";
-import redisClient from "../utils/connectRedis";
 
 export const createUser = async (input: ISignup) => {
   return await prisma.user.create({
@@ -44,9 +43,9 @@ export const updateUser = async (
 };
 
 export const signToken = async (user: User) => {
-await redisClient.set(`${user.id}`,JSON.stringify(user),{
-        EX:Number(process.env.REDIS_CACHE_EXP)  
-    })
+// await redisClient.set(`${user.id}`,JSON.stringify(user),{
+//         EX:Number(process.env.REDIS_CACHE_EXP)  
+//     })
 
 const access_token = await new SignJWT({sub:user})
       .setProtectedHeader({ alg: "HS256" })

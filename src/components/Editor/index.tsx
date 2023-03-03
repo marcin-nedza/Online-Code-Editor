@@ -44,7 +44,7 @@ const Editor = ({
   const [viewTooltip, setViewTooltip] = useState(false);
   const { myKeymap, showElement, setShowElement, isLoading } =
     useSaveProject(projectId);
-  console.log({ position, name });
+  // console.log({ position, name });
   const cursorTooltipField = StateField.define<readonly Tooltip[]>({
     // create: getCursorTooltips,
     create(view) {
@@ -104,7 +104,7 @@ const Editor = ({
     });
   }
   const cond = name.length > 0;
-  console.log("COND", cond);
+  // console.log("COND", cond);
 
   useEffect(() => {
     const extensions = [

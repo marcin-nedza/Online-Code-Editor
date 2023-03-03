@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { TChangeStatus } from "../../schemas/project";
 import { api } from "../../utils/api";
+import Invitation from "./Invitation";
 import SingleProject from "./SingleProject";
-// #002b36
+
 const Sidebar = () => {
   const { mutate: changeStatus } = api.project.changeStatus.useMutation();
   const { data, isSuccess } = api.project.getAllProject.useQuery();
@@ -37,9 +38,9 @@ const Sidebar = () => {
               data.data.map((el) => (
                 <SingleProject
                   key={el.id}
-                  isInvitation={false}
                   title={el.title}
                   id={el.id}
+                  files={el.files}
                 />
               ))}
           </div>
@@ -53,9 +54,9 @@ const Sidebar = () => {
               acceptedProjects.data.map((el) => (
                 <SingleProject
                   key={el.project.id}
-                  isInvitation={false}
                   title={el.project.title}
                   id={el.project.id}
+                  files={el.project.files}
                 />
               ))}
           </div>
@@ -63,18 +64,17 @@ const Sidebar = () => {
             <p className="">Invitations</p>
           </div>
           <div className="pt-2 text-start">
-            {isProjectsSuccess && projects.data.length > 0 &&
+            {isProjectsSuccess &&
+              projects.data.length > 0 &&
               projects.data.map((el) => (
-                <SingleProject
+                <Invitation
                   key={el.project.id}
-                  isInvitation={true}
                   title={el.project.title}
                   id={el.project.id}
                   onClick={handleChangePendingProject}
                 />
               ))}
           </div>
-
         </div>
       </div>
     </div>

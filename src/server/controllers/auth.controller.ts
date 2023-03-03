@@ -10,7 +10,6 @@ import {
 import { TRPCError } from "@trpc/server";
 import { Context } from "../api/trpc";
 import { getCookie, setCookie, getCookies } from "cookies-next";
-import redisClient from "../utils/connectRedis";
 import { SignJWT } from "jose";
 import { nanoid } from "nanoid";
 import cookie from "cookie";
@@ -90,74 +89,74 @@ export const loginHandler = async ({
   }
 };
 
-export const refreshAccessTokenHandler = async ({
-  ctx: { req, res },
-}: {
-  ctx: Context;
-}) => {
-  try {
-    const refresh_token = getCookie("refresh_token", { req, res }) as string;
-    const message = "Could not refresh token";
-    if (!refresh_token) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message,
-      });
-    }
-
-    const decoded = verifyJwt<{ sub: string }>(
-      refresh_token,
-      process.env.REFRESH_TOKEN
-    );
-    if (!decoded) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message,
-      });
-    }
-    const session = await redisClient.get(decoded.sub);
-    if (!session) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message,
-      });
-    }
-    console.log("@@@@@", decoded.sub, session);
-    const user = await findUniqueUser({
-      id: JSON.parse(session).id as string,
-    });
-
-    if (!user) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message,
-      });
-    }
-    //sign new token
-    const access_token = signJwt({ sub: user.id }, process.env.ACCESS_TOKEN, {
-      expiresIn: `${process.env.ACCESS_TOKEN_EXP}s`,
-    });
-
-    setCookie("access_token", access_token, {
-      req,
-      res,
-      ...accessTokenCookieOptions,
-    });
-    setCookie("logged_in", "true", {
-      req,
-      res,
-      ...accessTokenCookieOptions,
-      httpOnly: false,
-    });
-
-    return {
-      status: "succes",
-      access_token,
-    };
-  } catch (error) {
-    throw error;
-  }
-};
+// export const refreshAccessTokenHandler = async ({
+//   ctx: { req, res },
+// }: {
+//   ctx: Context;
+// }) => {
+//   try {
+//     const refresh_token = getCookie("refresh_token", { req, res }) as string;
+//     const message = "Could not refresh token";
+//     if (!refresh_token) {
+//       throw new TRPCError({
+//         code: "FORBIDDEN",
+//         message,
+//       });
+//     }
+//
+//     const decoded = verifyJwt<{ sub: string }>(
+//       refresh_token,
+//       process.env.REFRESH_TOKEN
+//     );
+//     if (!decoded) {
+//       throw new TRPCError({
+//         code: "FORBIDDEN",
+//         message,
+//       });
+//     }
+//     const session = await redisClient.get(decoded.sub);
+//     if (!session) {
+//       throw new TRPCError({
+//         code: "FORBIDDEN",
+//         message,
+//       });
+//     }
+//     console.log("@@@@@", decoded.sub, session);
+//     const user = await findUniqueUser({
+//       id: JSON.parse(session).id as string,
+//     });
+//
+//     if (!user) {
+//       throw new TRPCError({
+//         code: "FORBIDDEN",
+//         message,
+//       });
+//     }
+//     //sign new token
+//     const access_token = signJwt({ sub: user.id }, process.env.ACCESS_TOKEN, {
+//       expiresIn: `${process.env.ACCESS_TOKEN_EXP}s`,
+//     });
+//
+//     setCookie("access_token", access_token, {
+//       req,
+//       res,
+//       ...accessTokenCookieOptions,
+//     });
+//     setCookie("logged_in", "true", {
+//       req,
+//       res,
+//       ...accessTokenCookieOptions,
+//       httpOnly: false,
+//     });
+//
+//     return {
+//       status: "succes",
+//       access_token,
+//     };
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 const logout = ({ ctx: { req, res } }: { ctx: Context }) => {
   setCookie("access_token", "", { req, res, maxAge: -1 });
@@ -169,7 +168,7 @@ export const logoutHandler = async ({ ctx }: { ctx: Context }) => {
   try {
     const user = ctx.user;
     console.log("USER", user);
-    await redisClient.del(String(user?.id));
+    // await redisClient.del(String(user?.id));
     logout({ ctx });
     return { status: "succes" };
   } catch (error) {
