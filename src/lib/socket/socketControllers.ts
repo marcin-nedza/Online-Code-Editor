@@ -5,7 +5,7 @@ import { TSocketData, TUsers, TViewState } from "../../schemas/socket";
 type MapUser = {
   socketId: string;
   position?: number;
-  projectId: string;
+  fileId: string;
 };
 //client
 export const updateContentEmitter = (
@@ -33,15 +33,15 @@ export const getPositionListener = ({
 
 export const connectToRoom = ({
   socket,
-  projectId,
+  fileId,
   userId,
 }: {
   socket: SocketClient;
-  projectId: string | string[];
+  fileId: string | string[];
   userId: string | null;
 }) => {
   // socket.on("connect", () => {
-  socket.emit(ROOM_ACTION.CONNECT_TO_ROOM, { projectId, userId });
+  socket.emit(ROOM_ACTION.CONNECT_TO_ROOM, { fileId, userId });
   // });
 };
 export const userConnectedListener = (socket: SocketClient) => {
@@ -54,17 +54,16 @@ export const connectToRoomListener = (
 ) => {
   socket.on(
     ROOM_ACTION.CONNECT_TO_ROOM,
-    async ({ projectId, userId }: { projectId: string; userId: string }) => {
-      await socket.join(projectId);
+    async ({ fileId, userId }: { fileId: string; userId: string }) => {
+      await socket.join(fileId);
       const socketId = socket.id;
-      users.set(userId, { socketId, projectId });
+      users.set(userId, { socketId, fileId });
     }
   );
 };
 
 export const codeChangesListener = (socket: SocketServer, io: any) => {
   socket.on(ROOM_ACTION.CODE_CHANGED, (data: TViewState) => {
-    console.log("DATA", data);
-    socket.to(data.projectId).emit(ROOM_ACTION.SEND_MESSAGE, data);
+    socket.to(data.fileId).emit(ROOM_ACTION.SEND_MESSAGE, data);
   });
 };

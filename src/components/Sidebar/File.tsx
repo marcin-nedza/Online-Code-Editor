@@ -1,19 +1,29 @@
 import {File} from '@prisma/client'
+import {useRouter} from 'next/router'
 import React from 'react'
+import {SimpleFile} from '../../schemas/file';
 
 type Props={
-    file:File  
+    file:File ;
+    simpleFile?:SimpleFile[]
 }
-const File = ({file}:Props) => {
+const File = ({file,simpleFile}:Props) => {
+    console.log('FILE TABARA',simpleFile)
+  const router = useRouter();
+  const redirect = () => {
+        simpleFile?.push({id:file.id,title:file.title})
+        console.log(simpleFile)
+    // router.push(`/test/${file.projectId}/file/${file.id}`);
+  };
   return (
     <div className="relative w-full pl-6 cursor-pointer hover:bg-accent2">
       <div
-        onClick={() => {}}
+        onClick={redirect}
         className=" before:invisible 
                             before:absolute before:left-3/4 before:-bottom-2 before:z-10 
                             before:w-max 
-                                before:max-w-xs
-                before:translate-x-9
+                            before:max-w-xs
+                            before:translate-x-9
                             before:-translate-y-1/2 
                             before:rounded-lg before:bg-gray-700 before:px-3 
                             before:py-1.5 before:text-white before:content-[attr(data-tip)] 

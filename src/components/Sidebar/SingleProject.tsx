@@ -1,24 +1,48 @@
 import File from "./File";
+import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { api } from "../../utils/api";
+import {SimpleFile} from "../../schemas/file";
 
 type Props = {
   id: string;
   title: string;
   files?: File[];
+    tabFiles?:SimpleFile[]
 };
-const SingleProject = ({ id, title, files }: Props) => {
+const SingleProject = ({ id, title, files ,tabFiles}: Props) => {
   const router = useRouter();
   const redirect = (id: string) => {
     router.push(`/project/${id}`);
   };
-  const isFilesPresent = files?.length > 0;
+    console.log("SINGLEPROJ ",tabFiles)
+  const isFilesPresent =  files?.length > 0;
   const [open, setOpen] = useState(false);
   const [folderOpen, setFolderOpen] = useState(false);
-  console.log("FOLDEr", folderOpen);
+  const [fileName, setFileName] = useState("");
+  const { mutate } = api.file.createFile.useMutation({
+    onSuccess: () => {
+      refetch();
+      setFileName("");
+      setOpen(false);
+    },
+  });
+  const { refetch } = api.project.getAllProject.useQuery();
+  const handleSubmit = (e:any) => {
+    e.preventDefault();
+    mutate({ title: fileName, projectId: id });
+  };
+  const ref = useRef(null);
+
+  useOutsideAlerter(ref, setOpen);
   return (
     <div className="">
-      <div className="relative w-full cursor-pointer hover:bg-accent2">
+      <div
+        className={`relative w-full cursor-pointer  border hover:bg-accent2 ${
+          folderOpen ? "border-accent" : "border-transparent"
+        }`}
+      >
         <div
           onClick={() => {}}
           className=" before:invisible 
@@ -35,7 +59,7 @@ const SingleProject = ({ id, title, files }: Props) => {
                             after:border-r-transparent hover:before:visible hover:after:visible"
           data-tip={title}
         >
-          <div className="flex">
+          <div className={`flex ${folderOpen ? "bg-accent2" : ""}`}>
             <p
               onClick={() => setFolderOpen(!folderOpen)}
               className="flex items-center w-5 pl-1"
@@ -48,19 +72,25 @@ const SingleProject = ({ id, title, files }: Props) => {
           </div>
         </div>
       </div>
-      {isFilesPresent && folderOpen &&
-        files?.map((file) => <File key={file.id} file={file} />)}
-            <div onClick={()=>setOpen(!open)} className="cursor-pointer">
-
-        {open?(
-                <div className="">
-
-        <input/>
-                </div>
-        ):(
-            <p  className="w-full text-center">+</p>
-        )} 
-            </div>
+      {isFilesPresent &&
+        folderOpen &&
+        files?.map((file) => <File key={file.id} file={file} simpleFile={tabFiles} />)}
+      {folderOpen && !open && (
+        <div
+          onClick={() => setOpen(!open)}
+          className="text-center cursor-pointer hover:bg-accent2"
+        >
+          +
+        </div>
+      )}
+      {open && (
+        <form onSubmit={handleSubmit} ref={ref} className="w-10">
+          <input
+            onChange={(e) => setFileName(e.target.value)}
+            className="py-1 pl-2 border-t border-b border-transparent outline-none bg-main-bg focus:border-accent"
+          />
+        </form>
+      )}
     </div>
   );
 };

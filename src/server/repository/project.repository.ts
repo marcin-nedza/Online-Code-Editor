@@ -13,8 +13,8 @@ export const findUniqueProject = async (
 ) => {
   return (await prisma.project.findUnique({
     where,
-    select,
-  })) as Project;
+        include:{files:{orderBy:{createdAt:'desc'}}}
+  })) ;
 };
 
 export const findManyProjects = async (
@@ -24,7 +24,7 @@ export const findManyProjects = async (
   return await prisma.project.findMany({
     where,
     // select,
-        include:{files:true}
+        include:{files:{orderBy:{createdAt:'desc'}}}
     })
 };
 export const findAssignedProjectByStatus=async(

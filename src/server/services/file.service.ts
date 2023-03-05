@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import {TCreateFile} from "../../schemas/file";
-import {createFile} from "../repository/file.repository";
+import {TCreateFile, TUpdateFile} from "../../schemas/file";
+import {createFile, findUniqueFile, updateFile} from "../repository/file.repository";
 import {findUniqueProject} from "../repository/project.repository";
 
 export const createFileService = async (input: TCreateFile) => {
@@ -13,4 +13,10 @@ const project = await findUniqueProject({id:input.projectId});
   }
 
   return await createFile(input);
+};
+export const findUniqueFileService=async({fileId}:{fileId:string}) =>{
+    return await findUniqueFile({id:fileId})
+}
+export const saveFile = async ({ content, id }: TUpdateFile) => {
+  return await updateFile({ id }, content);
 };

@@ -39,7 +39,6 @@ const cursorTooltipBaseTheme = EditorView.baseTheme({
 const basicExtensions = [
   keymap.of(defaultKeymap),
   basicSetup,
-    cursorTooltipBaseTheme,
   javascript({
     jsx: true,
     typescript: true,

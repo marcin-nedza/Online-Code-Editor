@@ -1,21 +1,27 @@
+import {File} from "@prisma/client";
 import React, { useContext } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
+import {SimpleFile} from "../../schemas/file";
 import ManageProject from "./ManageProject";
 
-type Props = {
+ type Props = {
   title: string;
   children: React.ReactNode;
+    files?:SimpleFile[]
 };
 
 const ProjectBar = ({
   title,
   children,
+    files
 }: Props) => {
     const {isAddUserOpen,setAddUserMenuOpen,selectedOption,setSelectedOption}=useContext(ProjectPageContext)
+console.log('PROJECTBAR TAB',files)
   return (
     <div className="">
       <div className="">
         <div className="flex  h-[var(--sidebar-title-h)]  w-full items-center bg-dark-bg text-xs text-white">
+
           <div
             onClick={() => {
               setSelectedOption("project");
@@ -29,6 +35,7 @@ const ProjectBar = ({
               &#x2715;
             </div>
           </div>
+                    {/* MANAGE PROJECT MENU*/}
           {isAddUserOpen && (
             <div
               className={` relative flex h-full cursor-pointer items-center border-r border-dark-bg px-2 ${

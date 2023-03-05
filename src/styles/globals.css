@@ -13,6 +13,10 @@
 body{
     background-color: #282c34;
 }
+.cm-editor{
+    height: calc(100vh - var(--navbar-h) - var(--sidebar-title-h) - var(--terminal-h) - var(--terminal-title-h));
+
+}
 .loader {
   width: 48px;
   height: 48px;
@@ -65,3 +69,13 @@ body{
 .sidebar-height{
     height: calc(100vh - 42px);
 }
+
+.cm-scroller {
+  overflow-y: auto;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+}
+.cm-scroller::-webkit-scrollbar {
+  width: 0px; /* Hide scrollbar for Chrome and Safari */
+}
+

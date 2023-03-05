@@ -15,12 +15,12 @@ export const userDataConnect=z.object({
 export const viewState=z.object({
     len:z.number(),
     text:z.string(),
-    projectId:z.string().or(z.array(z.string())),
+    fileId:z.string().or(z.array(z.string())),
 }) 
 
 export const socketData=z.object({
    pos:z.number(),
-    projectId:z.string(),
+    fileId:z.string(),
     userId:z.string(),
     username:z.string(),
 })

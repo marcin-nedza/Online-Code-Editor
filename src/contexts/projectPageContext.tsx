@@ -1,5 +1,8 @@
 import React, { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
-
+type SimpleFile ={
+    id:string,
+    title:string
+}
 type TProjectPageContext = {
     isAddUserOpen: boolean;
     setAddUserMenuOpen:Dispatch<SetStateAction<boolean>> 

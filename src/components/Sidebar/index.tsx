@@ -1,10 +1,14 @@
 import { useEffect } from "react";
+import {SimpleFile} from "../../schemas/file";
 import { TChangeStatus } from "../../schemas/project";
 import { api } from "../../utils/api";
 import Invitation from "./Invitation";
 import SingleProject from "./SingleProject";
+type Props={
+    files:SimpleFile[]
 
-const Sidebar = () => {
+}
+const Sidebar = ({files}:Props) => {
   const { mutate: changeStatus } = api.project.changeStatus.useMutation();
   const { data, isSuccess } = api.project.getAllProject.useQuery();
   const {
@@ -41,6 +45,7 @@ const Sidebar = () => {
                   title={el.title}
                   id={el.id}
                   files={el.files}
+                    tabFiles={files}
                 />
               ))}
           </div>
@@ -57,6 +62,7 @@ const Sidebar = () => {
                   title={el.project.title}
                   id={el.project.id}
                   files={el.project.files}
+                    tabFiles={files}
                 />
               ))}
           </div>
