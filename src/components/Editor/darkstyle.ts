@@ -41,7 +41,7 @@ export const solarizedDarkTheme = EditorView.theme(
 
     ".cm-content": {
       caretColor: cursor,
-      minHeight: `calc(100vh - (var(--navbar-h) + var(--sidebar-title-h) + var(--terminal-h)) - 1px)`,
+      minHeight: `calc(100vh - (var(--navbar-h) + var(--sidebar-title-h) + var(--terminal-h) + var(--pathbar-h)) - 1px)`,
     },
     ".cm-cursor, .cm-dropCursor": { borderLeftColor: cursor },
         ".cm-scroller .cm-content":{paddingTop:"0px"},

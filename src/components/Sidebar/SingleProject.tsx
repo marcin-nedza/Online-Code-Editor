@@ -9,14 +9,12 @@ type Props = {
   id: string;
   title: string;
   files?: File[];
-    tabFiles?:SimpleFile[]
 };
-const SingleProject = ({ id, title, files ,tabFiles}: Props) => {
+const SingleProject = ({ id, title, files }: Props) => {
   const router = useRouter();
   const redirect = (id: string) => {
     router.push(`/project/${id}`);
   };
-    console.log("SINGLEPROJ ",tabFiles)
   const isFilesPresent =  files?.length > 0;
   const [open, setOpen] = useState(false);
   const [folderOpen, setFolderOpen] = useState(false);
@@ -74,7 +72,7 @@ const SingleProject = ({ id, title, files ,tabFiles}: Props) => {
       </div>
       {isFilesPresent &&
         folderOpen &&
-        files?.map((file) => <File key={file.id} file={file} simpleFile={tabFiles} />)}
+        files?.map((file) => <File key={file.id} file={file}  />)}
       {folderOpen && !open && (
         <div
           onClick={() => setOpen(!open)}

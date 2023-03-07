@@ -1,5 +1,5 @@
 import {createFileSchema,getOneFileSchema, updateFileSchema} from "../../../schemas/file";
-import {createFileHandler,getSingleFileHandler, updateFileHandler} from "../../controllers/file.controller";
+import {createFileHandler,deleteFileController,getSingleFileHandler, updateFileHandler} from "../../controllers/file.controller";
 import {createTRPCRouter, publicProcedure} from "../trpc";
 
 
@@ -13,5 +13,8 @@ getSingleFile:publicProcedure
     .mutation(({input})=>getSingleFileHandler({input})),
     saveFile:publicProcedure
     .input(updateFileSchema)
-    .mutation(({input})=> updateFileHandler(input))
+    .mutation(({input})=> updateFileHandler(input)),
+    deleteFile:publicProcedure
+    .input(getOneFileSchema)
+    .mutation(({input})=>deleteFileController(input))
 })

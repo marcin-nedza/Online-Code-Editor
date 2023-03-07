@@ -1,18 +1,24 @@
-import {File} from '@prisma/client'
-import {useRouter} from 'next/router'
-import React from 'react'
-import {SimpleFile} from '../../schemas/file';
+import { File } from "@prisma/client";
+import { useRouter } from "next/router";
+import React, { useContext } from "react";
+import { ProjectPageContext } from "../../contexts/projectPageContext";
 
-type Props={
-    file:File ;
-    simpleFile?:SimpleFile[]
-}
-const File = ({file,simpleFile}:Props) => {
-    console.log('FILE TABARA',simpleFile)
+type Props = {
+  file: File;
+};
+const File = ({ file }: Props) => {
   const router = useRouter();
+
+  const { fileTabsArray, addFileTab, activateFileTab } =
+    useContext(ProjectPageContext);
   const redirect = () => {
-        simpleFile?.push({id:file.id,title:file.title})
-        console.log(simpleFile)
+    //
+    if (!fileTabsArray?.find((el) => el.id === file.id)) {
+      addFileTab({ id: file.id, title: file.title });
+    }
+    if (fileTabsArray?.find((el) => el.id === file.id)) {
+      activateFileTab(file.id);
+    }
     // router.push(`/test/${file.projectId}/file/${file.id}`);
   };
   return (
@@ -40,7 +46,7 @@ const File = ({file,simpleFile}:Props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default File
+export default File;

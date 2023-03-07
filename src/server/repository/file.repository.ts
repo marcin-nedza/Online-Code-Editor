@@ -20,3 +20,7 @@ export const updateFile = async (
     where,
   });
 };
+
+export const deleteFile = async (where: Prisma.FileWhereUniqueInput)=>{
+    return await prisma.file.delete({where})
+}

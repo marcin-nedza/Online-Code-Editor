@@ -9,6 +9,7 @@
     --terminal-h:140px;
     --terminal-title-h:30px;
     --utilitybar-w:100px;
+    --pathbar-h:1.2rem;
 }
 body{
     background-color: #282c34;

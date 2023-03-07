@@ -13,6 +13,7 @@ export const runCode = ({
   current: string;
 }): Promise<string> => {
   return new Promise((resolve, reject) => {
+        console.log("@@@@@@",files,current)
     const tempFolder = path.join(os.tmpdir(), "coeditor");
     if (!fs.existsSync(tempFolder)) {
       fs.mkdirSync(tempFolder);

@@ -18,6 +18,6 @@ export const updateFileSchema = z.object({
 
 export type TUpdateFile = z.infer<typeof updateFileSchema>
 export type TCreateFile=z.infer<typeof createFileSchema>
-export type IGetOneFileSchema = z.infer<typeof getOneFileSchema>
+export type TGetOneFile = z.infer<typeof getOneFileSchema>
 export type TCreateFileInput=z.infer<typeof createFileInputSchema>
  export type SimpleFile={id:string,title:string}

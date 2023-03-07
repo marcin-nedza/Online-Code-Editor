@@ -4,11 +4,7 @@ import { TChangeStatus } from "../../schemas/project";
 import { api } from "../../utils/api";
 import Invitation from "./Invitation";
 import SingleProject from "./SingleProject";
-type Props={
-    files:SimpleFile[]
-
-}
-const Sidebar = ({files}:Props) => {
+const Sidebar = () => {
   const { mutate: changeStatus } = api.project.changeStatus.useMutation();
   const { data, isSuccess } = api.project.getAllProject.useQuery();
   const {
@@ -45,7 +41,6 @@ const Sidebar = ({files}:Props) => {
                   title={el.title}
                   id={el.id}
                   files={el.files}
-                    tabFiles={files}
                 />
               ))}
           </div>
@@ -62,7 +57,6 @@ const Sidebar = ({files}:Props) => {
                   title={el.project.title}
                   id={el.project.id}
                   files={el.project.files}
-                    tabFiles={files}
                 />
               ))}
           </div>

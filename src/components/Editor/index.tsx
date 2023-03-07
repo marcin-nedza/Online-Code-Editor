@@ -22,15 +22,16 @@ const Editor = ({
   code,
   setCode,
   socket,
+    fileId
 }: {
   code: string;
   setCode: (val: string) => void;
   socket: Socket;
+        fileId:string
 }) => {
   const editor = useRef<HTMLInputElement>();
   const router = useRouter();
   const projectId = router.query?.projectId ?? "";
-  const fileId = router.query?.fileId ?? "";
   const userId = localStorage.getItem("id");
   const [position, setPosition] = useState(0);
   const [name, setName] = useState("");
