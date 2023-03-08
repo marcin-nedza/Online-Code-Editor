@@ -82,7 +82,7 @@ const FilePage = () => {
           <div className="flex">
             <Sidebar />
             <div className="flex flex-col">
-              <AnotherProjectBar project={singleProjectData?.data.title}>
+              <AnotherProjectBar projectTitle={singleProjectData?.data.title}>
                 <File
                   onFileChange={handleFileIdChange}
                   setCode={setCode}

@@ -55,7 +55,10 @@ const File = ({ code, runCodeResult,onFileChange, setCode }: Props) => {
 
   useEffect(() => {
     reset();
+        if(fileId){
+
     getFile({ id: fileId });
+        }
   }, [fileId]);
 
   return (

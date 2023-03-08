@@ -1,23 +1,34 @@
 import React, { useRef, useState } from "react";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
-import {api} from "../../utils/api";
+import { SimpleFile } from "../../schemas/file";
+
 type Props = {
-  projectTitle: string;
-  fileTitle: string;
-    fileId:string
-    closeTab:(id:string)=>void
+  projectData: {
+    projectTitle: string;
+    fileTitle: string|undefined;
+    fileId: string;
+  };
+  // projectTitle: string;
+  // fileTitle: string;
+  // fileId: string;
+  handleDeleteFile: (fileId: string) => void;
 };
-const Pathbar = ({ fileTitle, projectTitle,fileId ,closeTab}: Props) => {
+const Pathbar = ({
+  // fileTitle,
+  // projectTitle,
+  // fileId,
+    projectData,
+  handleDeleteFile,
+}: Props) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   useOutsideAlerter(ref, setOpen);
-    const {mutate:deleteFile}=api.file.deleteFile.useMutation()
   return (
     <div
       className="flex  h-[var(--pathbar-h)] items-center
                     justify-between border-b-[1px] border-accent2 bg-light-bg text-xs text-white "
     >
-      <p className="ml-3">{` ${projectTitle}>${fileTitle}`}</p>
+      <p className="ml-3">{` ${projectData.projectTitle}>${projectData.fileTitle}`}</p>
       <div className="relative">
         <div
           onClick={() => setOpen(!open)}
@@ -32,14 +43,19 @@ const Pathbar = ({ fileTitle, projectTitle,fileId ,closeTab}: Props) => {
           >
             <p className="text-center">Delete File?</p>
             <div className="flex justify-around px-4 pt-2">
-              <div onClick={()=>{
-                                deleteFile({id:fileId})
-                                closeTab(fileId)
-                            }}
-                                className="flex h-6 w-6 cursor-pointer items-center justify-center text-[1rem] hover:bg-red-400">
+              <div
+                onClick={() => {
+                  handleDeleteFile(projectData.fileId);
+                  setOpen(false);
+                }}
+                className="flex h-6 w-6 cursor-pointer items-center justify-center text-[1rem] hover:bg-red-400"
+              >
                 &#10003;
               </div>
-              <div onClick={() => setOpen(false)}className="flex h-6 w-6 cursor-pointer items-center justify-center text-[1rem] ">
+              <div
+                onClick={() => setOpen(false)}
+                className="flex h-6 w-6 cursor-pointer items-center justify-center text-[1rem] "
+              >
                 &#9747;
               </div>
             </div>

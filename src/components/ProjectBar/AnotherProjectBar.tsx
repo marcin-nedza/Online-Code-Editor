@@ -1,7 +1,6 @@
-import { Prisma } from "@prisma/client";
 import React, { useContext } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
-import { SimpleFile } from "../../schemas/file";
+import { api } from "../../utils/api";
 import Pathbar from "./Pathbar";
 
 type Props = {
@@ -9,11 +8,36 @@ type Props = {
   projectTitle: string;
 };
 
-const AnotherProjectBar = ({ children, project }: Props) => {
-  const { fileTabsArray, closeTab, activateFileTab, tabId } =
+const AnotherProjectBar = ({ children, projectTitle }: Props) => {
+  const { fileTabsArray, closeTab, activateFileTab, tabId,setFileTabsArray } =
     useContext(ProjectPageContext);
   const currentFileTitle = fileTabsArray.filter((el) => el.active)[0]?.title;
+  const { mutate: deleteFile } = api.file.deleteFile.useMutation();
 
+  const handleCloseTab = (fileId: string) => {
+    const index = fileTabsArray.findIndex((file) => file.id === fileId);
+    closeTab(fileId);
+    if (index === 0 && fileTabsArray.length > 0) {
+      activateFileTab(fileTabsArray[1]?.id);
+    }
+    if (index > 0 && index <= fileTabsArray.length - 1) {
+      activateFileTab(fileTabsArray[index - 1]?.id);
+    }
+        if(index===0 && fileTabsArray.length===1){
+            setFileTabsArray([])
+            console.log("asd",fileTabsArray)
+        }
+  };
+
+  const handleDeleteTab = (fileId: string) => {
+    deleteFile({ id: fileId });
+    handleCloseTab(fileId);
+  };
+  const projectData = {
+    fileId: tabId,
+    projectTitle,
+    fileTitle: currentFileTitle,
+  };
   return (
     <div className="">
       <div
@@ -35,16 +59,7 @@ const AnotherProjectBar = ({ children, project }: Props) => {
             <div
               onClick={(e) => {
                 e.stopPropagation();
-                const index = fileTabsArray.findIndex(
-                  (file) => file.id === el.id
-                );
-                closeTab(el.id);
-                if (index === 0 && fileTabsArray.length > 0) {
-                  activateFileTab(fileTabsArray[1]?.id);
-                }
-                if (index > 0 && index <= fileTabsArray.length - 1) {
-                  activateFileTab(fileTabsArray[index - 1]?.id);
-                }
+                handleCloseTab(el.id);
               }}
               className="flex justify-center w-4 ml-1 text-sm hover:bg-light-bg"
             >
@@ -54,12 +69,7 @@ const AnotherProjectBar = ({ children, project }: Props) => {
         ))}
       </div>
       {currentFileTitle && (
-        <Pathbar
-          fileId={tabId}
-          fileTitle={currentFileTitle}
-          projectTitle={project}
-                    closeTab={closeTab}
-        />
+        <Pathbar projectData={projectData} handleDeleteFile={handleDeleteTab} />
       )}
       {children}
     </div>

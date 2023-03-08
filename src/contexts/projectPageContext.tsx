@@ -17,10 +17,11 @@ type TProjectPageContext = {
   setSelectedOption: Dispatch<SetStateAction<"project" | "option">>;
   position: number;
   setPosition: Dispatch<SetStateAction<number>>;
+  setFileTabsArray: Dispatch<SetStateAction<SimpleFile[]>>;
   fileTabsArray: SimpleFile[];
   addFileTab: (file: SimpleFile) => void;
   closeTab: (id: string) => void;
-  activateFileTab: (id: string) => void;
+  activateFileTab: (id: string|undefined) => void;
   tabId: string;
   changeTabIndex: (
     arr: SimpleFile[],
@@ -37,6 +38,7 @@ export const ProjectPageContext = createContext<TProjectPageContext>({
   setPosition: () => {},
   fileTabsArray: [],
   addFileTab: () => {},
+    setFileTabsArray:()=>[],
   closeTab: () => {},
   activateFileTab: () => {},
   tabId: "",
@@ -68,13 +70,12 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
     });
   };
 
-  const activateFileTab = (id: string) => {
+  const activateFileTab = (id: string|undefined) => {
     setFileTabsArray((prevTabs) =>
       prevTabs.map((tab) =>
         tab.id === id ? { ...tab, active: true } : { ...tab, active: false }
       )
     );
-    console.log("CONTEXT", id);
     setTabId(id);
   };
   const closeTab = (id: string) => {
@@ -91,6 +92,7 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
     arr.splice(toIndex, 0, element);
     return arr;
   }
+    console.log('TABS',fileTabsArray)
   return (
     <ProjectPageContext.Provider
       value={{
@@ -100,6 +102,7 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
         fileTabsArray,
         addFileTab,
         isAddUserOpen,
+                setFileTabsArray,
         position,
         setPosition,
         tabId,
