@@ -2,6 +2,7 @@ import { File } from "@prisma/client";
 import { useRouter } from "next/router";
 import React, { useContext } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
+import {api} from "../../utils/api";
 
 type Props = {
   file: File;
@@ -9,17 +10,20 @@ type Props = {
 const File = ({ file }: Props) => {
   const router = useRouter();
 
+  const {  reset } =
+    api.compiler.writeFileAndRun.useMutation();
   const { fileTabsArray, addFileTab, activateFileTab } =
     useContext(ProjectPageContext);
   const redirect = () => {
     //
     if (!fileTabsArray?.find((el) => el.id === file.id)) {
       addFileTab({ id: file.id, title: file.title });
+            console.log('ASDASd')
     }
     if (fileTabsArray?.find((el) => el.id === file.id)) {
       activateFileTab(file.id);
     }
-    // router.push(`/test/${file.projectId}/file/${file.id}`);
+        reset()
   };
   return (
     <div className="relative w-full pl-6 cursor-pointer hover:bg-accent2">

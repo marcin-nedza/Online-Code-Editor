@@ -1,18 +1,16 @@
 import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
+    Dispatch,
+    SetStateAction,
+    useContext,
+    useEffect,
 } from "react";
+import { io, Socket } from "socket.io-client";
+import { ProjectPageContext } from "../../contexts/projectPageContext";
+import { connectToRoom } from "../../lib/socket/socketControllers";
 import { api } from "../../utils/api";
 import Editor from "../Editor";
 import Spinner from "../Spinner";
-import { io, Socket } from "socket.io-client";
-import { connectToRoom } from "../../lib/socket/socketControllers";
 import Terminal from "../Terminal";
-import { ProjectPageContext } from "../../contexts/projectPageContext";
 
 let socket: Socket;
 
@@ -20,11 +18,11 @@ type Props = {
   onFileChange: (id: string) => Dispatch<SetStateAction<string>>;
   setCode: Dispatch<SetStateAction<string>>;
   code: string;
-    runCodeResult:string
+  reset: () => void;
+  runCodeResult: string;
 };
-const File = ({ code, runCodeResult,onFileChange, setCode }: Props) => {
-
-  const { tabId } = useContext(ProjectPageContext);
+const File = ({ code, reset, runCodeResult, onFileChange, setCode }: Props) => {
+  const { tabId,isAddUserOpen } = useContext(ProjectPageContext);
   const fileId = tabId;
   useEffect(() => {
     onFileChange(tabId);
@@ -41,8 +39,6 @@ const File = ({ code, runCodeResult,onFileChange, setCode }: Props) => {
     },
   });
 
-  const {  reset } =
-    api.compiler.writeFileAndRun.useMutation();
   useEffect(() => {
     fetch("/api/socket")
       .then(() => {
@@ -55,10 +51,10 @@ const File = ({ code, runCodeResult,onFileChange, setCode }: Props) => {
 
   useEffect(() => {
     reset();
-        if(fileId){
-
-    getFile({ id: fileId });
-        }
+    if (fileId && !isAddUserOpen) {
+            console.log("ADD",isAddUserOpen)
+      getFile({ id: fileId });
+    }
   }, [fileId]);
 
   return (

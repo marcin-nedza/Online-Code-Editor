@@ -11,10 +11,7 @@ type Props = {
   files?: File[];
 };
 const SingleProject = ({ id, title, files }: Props) => {
-  const router = useRouter();
-  const redirect = (id: string) => {
-    router.push(`/project/${id}`);
-  };
+ 
   const isFilesPresent =  files?.length > 0;
   const [open, setOpen] = useState(false);
   const [folderOpen, setFolderOpen] = useState(false);
@@ -26,6 +23,7 @@ const SingleProject = ({ id, title, files }: Props) => {
       setOpen(false);
     },
   });
+
   const { refetch } = api.project.getAllProject.useQuery();
   const handleSubmit = (e:any) => {
     e.preventDefault();
@@ -72,7 +70,7 @@ const SingleProject = ({ id, title, files }: Props) => {
       </div>
       {isFilesPresent &&
         folderOpen &&
-        files?.map((file) => <File key={file.id} file={file}  />)}
+        files?.map((file) => <File key={file.id} file={file} />)}
       {folderOpen && !open && (
         <div
           onClick={() => setOpen(!open)}
@@ -84,6 +82,7 @@ const SingleProject = ({ id, title, files }: Props) => {
       {open && (
         <form onSubmit={handleSubmit} ref={ref} className="w-10">
           <input
+                        autoFocus
             onChange={(e) => setFileName(e.target.value)}
             className="py-1 pl-2 border-t border-b border-transparent outline-none bg-main-bg focus:border-accent"
           />

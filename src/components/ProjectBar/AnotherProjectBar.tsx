@@ -1,6 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
 import { api } from "../../utils/api";
+import ManageProject from "./ManageProject";
 import Pathbar from "./Pathbar";
 
 type Props = {
@@ -9,23 +10,33 @@ type Props = {
 };
 
 const AnotherProjectBar = ({ children, projectTitle }: Props) => {
-  const { fileTabsArray, closeTab, activateFileTab, tabId,setFileTabsArray } =
-    useContext(ProjectPageContext);
+  const {
+    fileTabsArray,
+    closeTab,
+    activateFileTab,
+    tabId,
+    setFileTabsArray,
+    isAddUserOpen,
+        setAddUserMenuOpen
+  } = useContext(ProjectPageContext);
   const currentFileTitle = fileTabsArray.filter((el) => el.active)[0]?.title;
   const { mutate: deleteFile } = api.file.deleteFile.useMutation();
-
+console.log("IS",isAddUserOpen)
   const handleCloseTab = (fileId: string) => {
     const index = fileTabsArray.findIndex((file) => file.id === fileId);
     closeTab(fileId);
+
     if (index === 0 && fileTabsArray.length > 0) {
       activateFileTab(fileTabsArray[1]?.id);
     }
     if (index > 0 && index <= fileTabsArray.length - 1) {
       activateFileTab(fileTabsArray[index - 1]?.id);
     }
-        if(index===0 && fileTabsArray.length===1){
-            setFileTabsArray([])
-            console.log("asd",fileTabsArray)
+    if (index === 0 && fileTabsArray.length === 1) {
+      setFileTabsArray([]);
+    }
+    if(isAddUserOpen) {
+            setAddUserMenuOpen(false)
         }
   };
 
@@ -68,10 +79,10 @@ const AnotherProjectBar = ({ children, projectTitle }: Props) => {
           </div>
         ))}
       </div>
-      {currentFileTitle && (
+      {currentFileTitle && !isAddUserOpen &&(
         <Pathbar projectData={projectData} handleDeleteFile={handleDeleteTab} />
       )}
-      {children}
+      {isAddUserOpen ? <ManageProject /> : children}
     </div>
   );
 };

@@ -16,7 +16,7 @@ const Navbar = ({
     handleSaveFile,
 }:
 Props) => {
-  const { isAddUserOpen, setAddUserMenuOpen, setSelectedOption } =
+  const { isAddUserOpen, setAddUserMenuOpen, setSelectedOption,addFileTab } =
     useContext(ProjectPageContext);
   const [openMenu, setOpenMenu] = useState(false);
   const router = useRouter();
@@ -51,8 +51,9 @@ Props) => {
               <button
                 onClick={() => {
                   setOpenMenu(false);
-                  setAddUserMenuOpen(!isAddUserOpen);
-                  setSelectedOption("option");
+                                    addFileTab({id:'manage',title:"Manage Project"})
+                  // setSelectedOption("option");
+                    setAddUserMenuOpen(true)
                 }}
                 className="whitespace-nowrap"
               >

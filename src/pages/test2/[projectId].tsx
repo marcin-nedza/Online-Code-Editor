@@ -51,7 +51,6 @@ const FilePage = () => {
   });
   const handleRunCode = () => {
     if (singleProjectData?.data.files) {
-      console.log("ASDASDASDASD", singleProjectData?.data.files);
       runCode({ files: singleProjectData?.data.files, current: code });
     }
   };
@@ -87,6 +86,7 @@ const FilePage = () => {
                   onFileChange={handleFileIdChange}
                   setCode={setCode}
                   code={code}
+                                    reset={reset}
                 runCodeResult={runCodeResult}
                 />
               </AnotherProjectBar>

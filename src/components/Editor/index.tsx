@@ -1,9 +1,4 @@
-import {
-  Compartment,
-  EditorState,
-  Extension,
-  StateField,
-} from "@codemirror/state";
+import { Compartment, EditorState, StateField } from "@codemirror/state";
 import { EditorView, showTooltip, Tooltip } from "@codemirror/view";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -13,21 +8,27 @@ import {
   getPositionListener,
   updateContentEmitter,
 } from "../../lib/socket/socketControllers";
-import { TViewState, TSendPositionData } from "../../schemas/socket";
+import { TViewState } from "../../schemas/socket";
 import Spinner from "../Spinner";
-import { basicExtensions, TooltipDisplay } from "./basicExtensions";
+import {
+  basicExtensions,
+  cursorTooltipBaseTheme,
+  cursorTooltipHidden,
+  TooltipDisplay,
+    cursorTooltipField,getCursorTooltips
+} from "./basicExtensions";
 import { useSaveFile } from "./keyBindings";
 
 const Editor = ({
   code,
   setCode,
   socket,
-    fileId
+  fileId,
 }: {
   code: string;
   setCode: (val: string) => void;
   socket: Socket;
-        fileId:string
+  fileId: string;
 }) => {
   const editor = useRef<HTMLInputElement>();
   const router = useRouter();
@@ -37,81 +38,52 @@ const Editor = ({
   const [name, setName] = useState("");
   const { myKeymap, showElement, setShowElement, isLoading } =
     useSaveFile(fileId);
-  const cursorTooltipField = StateField.define<readonly Tooltip[]>({
-    // create: getCursorTooltips,
-    create(view) {
-      return getCursorTooltips(view);
-    },
 
-    update(tooltips, tr) {
-      if (!tr.docChanged && !tr.selection) return tooltips;
-      const updated = getCursorTooltips(tr.state);
-
-      updated.forEach((tooltip) => {
-        tooltip.pos = position;
-        return;
-      });
-      return updated;
-    },
-
-    provide: (f) =>
-      showTooltip.computeN([f], (state) => {
-        return state.field(f);
-      }),
-  });
-  function getCursorTooltips(state: EditorState): readonly Tooltip[] {
-    return state.selection.ranges
-      .filter((range) => range.empty)
-      .map((range) => {
-        let line = state.doc.lineAt(range.head);
-        let text = name;
-        return TooltipDisplay({
-          pos: position,
-          arrow: true,
-          displayed: true,
-          text,
-        });
-      });
-  }
+  // const cursorTooltipField = StateField.define<readonly Tooltip[]>({
+  //   // create: getCursorTooltips,
+  //   create(view) {
+  //     return getCursorTooltips(view);
+  //   },
+  //
+  //   update(tooltips, tr) {
+  //     if (!tr.docChanged && !tr.selection) return tooltips;
+  //     const updated = getCursorTooltips(tr.state);
+  //
+  //     updated.forEach((tooltip) => {
+  //       tooltip.pos = position;
+  //       return;
+  //     });
+  //     return updated;
+  //   },
+  //
+  //   provide: (f) =>
+  //     showTooltip.computeN([f], (state) => {
+  //       return state.field(f);
+  //     }),
+  // });
+  // function getCursorTooltips(state: EditorState): readonly Tooltip[] {
+  //   return state.selection.ranges
+  //     .filter((range) => range.empty)
+  //     .map((range) => {
+  //       let line = state.doc.lineAt(range.head);
+  //       let text = name;
+  //       return TooltipDisplay({
+  //         pos: position,
+  //         arrow: true,
+  //         displayed: true,
+  //         text,
+  //       });
+  //     });
+  // }
   //TODO: keep track of users position on server
-  const cursorTooltipBaseTheme2 = EditorView.theme({
-    ".cm-tooltip.cm-tooltip-cursor": {
-      backgroundColor: "#66b",
-      color: "red",
-      border: "none",
-      padding: "2px 7px",
-      borderRadius: "8px",
-      "& .cm-tooltip-arrow:before": {
-        borderTopColor: "#66b",
-      },
-      "& .cm-tooltip-arrow:after": {
-        borderTopColor: "transparent",
-      },
-    },
-  });
-  const cursorTooltipBaseTheme = EditorView.theme({
-    ".cm-tooltip.cm-tooltip-cursor": {
-      display: "none",
-      backgroundColor: "white",
-      color: "white",
-      border: "none",
-      padding: "2px 7px",
-      borderRadius: "4px",
-      "& .cm-tooltip-arrow:before": {
-        borderTopColor: "#66b",
-      },
-      "& .cm-tooltip-arrow:after": {
-        borderTopColor: "transparent",
-      },
-    },
-  });
+
   let theme = new Compartment();
- 
+
   useEffect(() => {
     const extensions = [
       basicExtensions,
       myKeymap,
-      theme.of(cursorTooltipBaseTheme),
+      theme.of(cursorTooltipHidden),
       EditorView.updateListener.of((v) => {
         const pos = v.state.selection.main.head;
         if (v.view.hasFocus) {
@@ -134,7 +106,7 @@ const Editor = ({
         }
       }),
 
-      cursorTooltipField,
+      cursorTooltipField(position,name),
     ];
 
     const startState = EditorState.create({
@@ -145,10 +117,9 @@ const Editor = ({
       state: startState,
       parent: editor.current,
     });
-        //TODO: CHANGE THIS 
     if (name.length > 0) {
       view.dispatch({
-        effects: theme.reconfigure(cursorTooltipBaseTheme2),
+        effects: theme.reconfigure(cursorTooltipBaseTheme),
       });
     }
     if (!view) return;
@@ -164,7 +135,6 @@ const Editor = ({
           EditorState.create({ doc: updatedData.text, extensions: extensions })
         );
       };
-      // userConnectedListener(socket);
 
       updateContentEmitter(socket, update);
     }

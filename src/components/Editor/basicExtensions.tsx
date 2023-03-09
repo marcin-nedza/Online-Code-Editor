@@ -1,29 +1,35 @@
 import { defaultKeymap } from "@codemirror/commands";
+import { autocompletion } from "@codemirror/autocomplete";
 import { javascript } from "@codemirror/lang-javascript";
-import { EditorView, keymap, lineNumbers } from "@codemirror/view";
+import { Tooltip, keymap, lineNumbers, EditorView,showTooltip } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { solarizedDark } from "./darkstyle";
+import {
+  Compartment,
+  EditorState,
+  Extension,
+  StateField,
+} from "@codemirror/state";
 
-const cursorTooltipBaseThemeHidden = EditorView.baseTheme({
-  ".cm-tooltip.cm-tooltip-cursor": {
-    display: "none",
-    "& .cm-tooltip-arrow:before": {
-      display: "hidden",
-    },
-    "& .cm-tooltip-arrow:after": {
-      display: "hidden",
-    },
-    "& .cm-tooltip-above": {
-      display: "hidden",
-    },
-  },
-// ".cm-tooltip-cursor.cm-tooltip.cm-tooltip-above":{
-//     display: "none",
-//     }
-});
-const cursorTooltipBaseTheme = EditorView.baseTheme({
+const cursorTooltipBaseTheme = EditorView.theme({
   ".cm-tooltip.cm-tooltip-cursor": {
     backgroundColor: "#66b",
+    color: "red",
+    border: "none",
+    padding: "2px 7px",
+    borderRadius: "8px",
+    "& .cm-tooltip-arrow:before": {
+      borderTopColor: "#66b",
+    },
+    "& .cm-tooltip-arrow:after": {
+      borderTopColor: "transparent",
+    },
+  },
+});
+const cursorTooltipHidden = EditorView.theme({
+  ".cm-tooltip.cm-tooltip-cursor": {
+    display: "none",
+    backgroundColor: "white",
     color: "white",
     border: "none",
     padding: "2px 7px",
@@ -39,6 +45,7 @@ const cursorTooltipBaseTheme = EditorView.baseTheme({
 const basicExtensions = [
   keymap.of(defaultKeymap),
   basicSetup,
+  autocompletion({}),
   javascript({
     jsx: true,
     typescript: true,
@@ -73,9 +80,58 @@ const TooltipDisplay = ({
     },
   };
 };
+const cursorTooltipField = (position: number,name:string) => {
+  return StateField.define<readonly Tooltip[]>({
+    // create: getCursorTooltips,
+    create(view) {
+      return getCursorTooltips({state:view,position,name});
+    },
+
+    update(tooltips, tr) {
+      if (!tr.docChanged && !tr.selection) return tooltips;
+      const updated = getCursorTooltips({state:tr.state,position,name});
+
+      updated.forEach((tooltip) => {
+        tooltip.pos = position;
+        return;
+      });
+      return updated;
+    },
+
+    provide: (f) =>
+      showTooltip.computeN([f], (state) => {
+        return state.field(f);
+      }),
+  });
+};
+// state: EditorState,position:number
+function getCursorTooltips({
+  state,
+  position,
+  name,
+}: {
+  state: EditorState;
+  position: number;
+  name: string;
+}): readonly Tooltip[] {
+  return state.selection.ranges
+    .filter((range) => range.empty)
+    .map((range) => {
+      let line = state.doc.lineAt(range.head);
+      let text = name;
+      return TooltipDisplay({
+        pos: position,
+        arrow: true,
+        displayed: true,
+        text,
+      });
+    });
+}
 export {
   basicExtensions,
-  cursorTooltipBaseTheme,
   TooltipDisplay,
-  cursorTooltipBaseThemeHidden,
+  cursorTooltipHidden,
+  cursorTooltipBaseTheme,
+  cursorTooltipField,
+  getCursorTooltips,
 };

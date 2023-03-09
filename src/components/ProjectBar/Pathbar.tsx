@@ -1,25 +1,15 @@
 import React, { useRef, useState } from "react";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
-import { SimpleFile } from "../../schemas/file";
 
 type Props = {
   projectData: {
     projectTitle: string;
-    fileTitle: string|undefined;
+    fileTitle: string | undefined;
     fileId: string;
   };
-  // projectTitle: string;
-  // fileTitle: string;
-  // fileId: string;
   handleDeleteFile: (fileId: string) => void;
 };
-const Pathbar = ({
-  // fileTitle,
-  // projectTitle,
-  // fileId,
-    projectData,
-  handleDeleteFile,
-}: Props) => {
+const Pathbar = ({ projectData, handleDeleteFile }: Props) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   useOutsideAlerter(ref, setOpen);
