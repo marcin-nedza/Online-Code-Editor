@@ -20,49 +20,52 @@ const RegisterPage = () => {
 
   const onSubmit = async (data: ISignup) => {
       await mutateAsync(data);
-    await router.push('/')
+    await router.push('/login')
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-300">
-      <div className="flex flex-col w-1/3 bg-white border h-72 rounded-md border-gray-50">
-        <p className="text-center text-black"> Colab Editor</p>
-        <div className="flex flex-col items-center justify-around min-h-full gap-3">
+      <div className="flex items-center justify-center w-screen h-screen bg-main-bg">
+        <div className="flex  h-[25rem] w-[20rem] flex-col border border-accent bg-accent2">
+          <div className="">
+            <p className="py-2 text-2xl text-center text-white">SynCode</p>
+            <p className="px-4 pt-2 text-sm text-center text-white">
+              Perfect tool for online coding with friends{" "}
+            </p>
+          </div>
+
           <form
+            className="flex flex-col items-center mt-auto mb-16 text-center"
             onSubmit={handleSubmit(onSubmit)}
           >
             <input
-              className="w-full pb-2 text-center outline-none"
+              className="w-3/4 py-2 text-center text-white border border-b-0 outline-none border-accent bg-main-bg"
               placeholder="Email"
               {...register("email")}
             />
-            <input
-              className="w-full pb-2 text-center outline-none"
+  <input
+              className="w-3/4 py-2 text-center text-white border border-b-0 outline-none border-accent bg-main-bg"
               placeholder="Username"
               {...register("username")}
             />
             <input
-              className="w-full text-center outline-none"
+              className="w-3/4 py-2 text-center text-white border outline-none border-accent bg-main-bg"
               placeholder="Password"
               {...register("password")}
             />
-            <button
-              type="submit"
-              className="w-full mt-5 text-center border-2 hover:bg-blue-100"
-            >
-              REGISTER
+            <button className="w-3/4 py-2 mt-2 text-sm text-white border border-accent bg-secondary hover:bg-accent active:bg-blue-accent">
+                        Sign Up
             </button>
           </form>
-
-          <Link
-            className="flex justify-center text-xs font-bold text-red-500"
-            href="/"
-          >
-            Login
-          </Link>
+          <div className="mb-2 text-center">
+            <Link
+              href="/login"
+              className="text-xs text-blue-accent hover:text-blue-accent-light"
+            >
+                You have an account?Log In
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
   );
 };
 

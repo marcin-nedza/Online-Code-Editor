@@ -8,8 +8,8 @@ import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
 
 type Props = {
-  handleRunCode: () => void;
-  handleSaveFile: () => void;
+  handleRunCode?: () => void;
+  handleSaveFile?: () => void;
 };
 const Navbar = ({
   handleRunCode,

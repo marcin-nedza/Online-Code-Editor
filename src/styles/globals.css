@@ -69,6 +69,7 @@ body{
 
 .sidebar-height{
     height: calc(100vh - 42px);
+    
 }
 
 .cm-scroller {
@@ -78,5 +79,9 @@ body{
 }
 .cm-scroller::-webkit-scrollbar {
   width: 0px; /* Hide scrollbar for Chrome and Safari */
-}
 
+}
+ input:-webkit-autofill,
+  input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+  }

@@ -40,7 +40,6 @@ const SingleProject = ({ id, title, files }: Props) => {
         }`}
       >
         <div
-          onClick={() => {}}
           className=" before:invisible 
                             before:absolute before:left-3/4 before:-bottom-2 before:z-10 
                             before:w-max 
