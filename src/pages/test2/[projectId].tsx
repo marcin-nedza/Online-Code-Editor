@@ -1,24 +1,19 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
 import {
-  Editor,
-  Navbar,
-  ProjectBar,
-  Sidebar,
-  Spinner,
-  Terminal,
+    Navbar,
+    Sidebar,
 } from "../../components";
 import AnotherProjectBar from "../../components/ProjectBar/AnotherProjectBar";
 import File from "../../components/TEST/File";
 import ProjectPageProvider, {
-  ProjectPageContext,
+    ProjectPageContext
 } from "../../contexts/projectPageContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
 
-let socket: Socket;
 const FilePage = () => {
+  const { data, isSuccess } = api.project.getAllProject.useQuery();
   const [currentFileId, setCurrentFileId] = useState("");
   const [code, setCode] = useState<string>("");
   const router = useRouter();
@@ -35,7 +30,7 @@ const FilePage = () => {
 
   const { mutate: getProject, data: singleProjectData } =
     api.project.getSingleProject.useMutation();
-  const { mutate: saveFile, isLoading } = api.file.saveFile.useMutation();
+  const { mutate: saveFile } = api.file.saveFile.useMutation();
 
   const {
     mutate: runCode,
@@ -79,15 +74,15 @@ const FilePage = () => {
         <div className="flex flex-col">
           <Navbar handleSaveFile={handleSubmit} handleRunCode={handleRunCode} />
           <div className="flex">
-            <Sidebar />
+            <Sidebar isProjectFetched={isSuccess} listOfProjects={data?.data}/>
             <div className="flex flex-col">
               <AnotherProjectBar projectTitle={singleProjectData?.data.title}>
                 <File
                   onFileChange={handleFileIdChange}
                   setCode={setCode}
                   code={code}
-                                    reset={reset}
-                runCodeResult={runCodeResult}
+                  reset={reset}
+                  runCodeResult={runCodeResult}
                 />
               </AnotherProjectBar>
             </div>

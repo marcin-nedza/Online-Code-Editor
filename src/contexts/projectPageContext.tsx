@@ -56,8 +56,11 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
   const [fileTabsArray, setFileTabsArray] = useState<SimpleFile[]>([]);
   const [tabId, setTabId] = useState("");
   const addFileTab = (file: SimpleFile) => {
+        console.log('ADDFILE',file)
     setTabId(file.id);
+            console.log('ARR',fileTabsArray)
     setFileTabsArray((prevFileTabs) => {
+            console.log('FCK')
         prevFileTabs.map(el=>{
                 if(el.id==='manage'){
                     setAddUserMenuOpen(false)
@@ -71,8 +74,10 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
         ...file,
         active: true,
       });
+            console.log('updated',updatedFileTabs)
       return updatedFileTabs;
     });
+        console.log('END')
   };
 
   const activateFileTab = (id: string | undefined) => {

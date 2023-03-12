@@ -1,10 +1,17 @@
+import { File, Prisma, Project } from "@prisma/client";
 import { useEffect } from "react";
-import {SimpleFile} from "../../schemas/file";
+import { SimpleFile } from "../../schemas/file";
 import { TChangeStatus } from "../../schemas/project";
 import { api } from "../../utils/api";
 import Invitation from "./Invitation";
 import SingleProject from "./SingleProject";
-const Sidebar = () => {
+type Props = {
+  listOfProjects: (Project & {
+    files: File[];
+  })[];
+  isProjectFetched: boolean;
+};
+const Sidebar = ({ isProjectFetched, listOfProjects }: Props) => {
   const { mutate: changeStatus } = api.project.changeStatus.useMutation();
   const { data, isSuccess } = api.project.getAllProject.useQuery();
   const {
@@ -34,8 +41,8 @@ const Sidebar = () => {
             <p className="">Projects</p>
           </div>
           <div className="text-start">
-            {isSuccess &&
-              data.data.map((el) => (
+            {isProjectFetched &&
+              listOfProjects.map((el) => (
                 <SingleProject
                   key={el.id}
                   title={el.title}

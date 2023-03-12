@@ -21,7 +21,6 @@ const AnotherProjectBar = ({ children, projectTitle }: Props) => {
   } = useContext(ProjectPageContext);
   const currentFileTitle = fileTabsArray.filter((el) => el.active)[0]?.title;
   const { mutate: deleteFile } = api.file.deleteFile.useMutation();
-console.log("IS",isAddUserOpen)
   const handleCloseTab = (fileId: string) => {
     const index = fileTabsArray.findIndex((file) => file.id === fileId);
     closeTab(fileId);

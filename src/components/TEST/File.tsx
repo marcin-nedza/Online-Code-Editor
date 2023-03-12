@@ -24,6 +24,7 @@ type Props = {
 const File = ({ code, reset, runCodeResult, onFileChange, setCode }: Props) => {
   const { tabId,isAddUserOpen } = useContext(ProjectPageContext);
   const fileId = tabId;
+
   useEffect(() => {
     onFileChange(tabId);
   }, [tabId]);

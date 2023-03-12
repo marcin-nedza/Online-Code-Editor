@@ -1,25 +1,22 @@
 import { File } from "@prisma/client";
-import { useRouter } from "next/router";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
-import {api} from "../../utils/api";
+import { api } from "../../utils/api";
 
 type Props = {
   file: File;
 };
 const File = ({ file }: Props) => {
-  const router = useRouter();
 
   const {  reset } =
     api.compiler.writeFileAndRun.useMutation();
   const { fileTabsArray, addFileTab, activateFileTab } =
     useContext(ProjectPageContext);
-  const redirect = () => {
-    //
+  const redirect = async() => {
     if (!fileTabsArray?.find((el) => el.id === file.id)) {
       addFileTab({ id: file.id, title: file.title });
-            console.log('ASDASd')
-    }
+        }
+
     if (fileTabsArray?.find((el) => el.id === file.id)) {
       activateFileTab(file.id);
     }

@@ -3,7 +3,7 @@ import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
 import { api } from "../../utils/api";
-import {SimpleFile} from "../../schemas/file";
+import { SimpleFile } from "../../schemas/file";
 
 type Props = {
   id: string;
@@ -11,8 +11,8 @@ type Props = {
   files?: File[];
 };
 const SingleProject = ({ id, title, files }: Props) => {
- 
-  const isFilesPresent =  files?.length > 0;
+  const isFilesPresent = files?.length > 0;
+    const router=useRouter()
   const [open, setOpen] = useState(false);
   const [folderOpen, setFolderOpen] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -25,7 +25,7 @@ const SingleProject = ({ id, title, files }: Props) => {
   });
 
   const { refetch } = api.project.getAllProject.useQuery();
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     mutate({ title: fileName, projectId: id });
   };
@@ -56,7 +56,9 @@ const SingleProject = ({ id, title, files }: Props) => {
         >
           <div className={`flex ${folderOpen ? "bg-accent2" : ""}`}>
             <p
-              onClick={() => setFolderOpen(!folderOpen)}
+              onClick={() => {
+                setFolderOpen(!folderOpen);
+              }}
               className="flex items-center w-5 pl-1"
             >
               {folderOpen ? <>&#8627;</> : <>&gt;</>}
@@ -81,7 +83,7 @@ const SingleProject = ({ id, title, files }: Props) => {
       {open && (
         <form onSubmit={handleSubmit} ref={ref} className="w-10">
           <input
-                        autoFocus
+            autoFocus
             onChange={(e) => setFileName(e.target.value)}
             className="py-1 pl-2 border-t border-b border-transparent outline-none bg-main-bg focus:border-accent"
           />

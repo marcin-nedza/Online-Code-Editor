@@ -1,8 +1,5 @@
 import { useRouter } from "next/router";
-import {
-    useContext, useRef,
-    useState
-} from "react";
+import { useContext, useRef, useState } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
@@ -11,16 +8,12 @@ type Props = {
   handleRunCode?: () => void;
   handleSaveFile?: () => void;
 };
-const Navbar = ({
-  handleRunCode,
-    handleSaveFile,
-}:
-Props) => {
-  const { isAddUserOpen, setAddUserMenuOpen, setSelectedOption,addFileTab } =
+const Navbar = ({ handleRunCode, handleSaveFile }: Props) => {
+  const { isAddUserOpen, setAddUserMenuOpen, setSelectedOption, addFileTab } =
     useContext(ProjectPageContext);
   const [openMenu, setOpenMenu] = useState(false);
   const router = useRouter();
-    const ref = useRef(null);
+  const ref = useRef(null);
   useOutsideAlerter(ref, setOpenMenu);
 
   const { mutate: logout } = api.user.logout.useMutation({
@@ -28,10 +21,11 @@ Props) => {
       await router.push("/login");
     },
   });
- 
+
   const saveFile = () => {
-    console.log("SAVe");
-    handleSaveFile();
+    if (handleSaveFile) {
+      handleSaveFile();
+    }
     setOpenMenu(false);
   };
   return (
@@ -51,9 +45,9 @@ Props) => {
               <button
                 onClick={() => {
                   setOpenMenu(false);
-                                    addFileTab({id:'manage',title:"Manage Project"})
+                  addFileTab({ id: "manage", title: "Manage Project" });
                   // setSelectedOption("option");
-                    setAddUserMenuOpen(true)
+                  setAddUserMenuOpen(true);
                 }}
                 className="whitespace-nowrap"
               >

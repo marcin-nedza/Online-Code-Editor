@@ -1,7 +1,6 @@
 import React from "react";
 import { Navbar, Sidebar } from "../../components";
 import AnotherProjectBar from "../../components/ProjectBar/AnotherProjectBar";
-import File from "../../components/TEST/File";
 
 const index = () => {
   return (
@@ -13,7 +12,9 @@ const index = () => {
           <div className="flex flex-col">
             <AnotherProjectBar projectTitle={""}>
               <div className="flex bg-gray-200">
-                <div className="relative min-h-[calc(100vh_-_(var(--navbar-h)_+_var(--sidebar-title-h)_+_var(--terminal-h)_+_var(--pathbar-h))_-_1px)] w-full bg-[#282c34]"></div>
+                <div className="relative min-h-[calc(100vh_-_(var(--navbar-h)_+_var(--sidebar-title-h)))]
+                               w-[calc(100vw_-_var(--sidebar-w))] bg-[#282c34] ">
+                                </div>
               </div>
             </AnotherProjectBar>
           </div>
