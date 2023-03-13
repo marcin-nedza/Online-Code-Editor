@@ -1,92 +1,94 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { Editor, Navbar, Sidebar, Spinner, Terminal } from "../../components";
-import ProjectBar from "../../components/ProjectBar";
+import { Navbar, Sidebar } from "../../components";
+import AnotherProjectBar from "../../components/ProjectBar";
+import File from "../../components/TEST/File";
 import ProjectPageProvider, {
   ProjectPageContext,
 } from "../../contexts/projectPageContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
-import { connectToRoom } from "../../lib/socket/socketControllers";
 import { api } from "../../utils/api";
 
-let socket: Socket;
-const ProjectPage = () => {
+const FilePage = () => {
+  const [currentFileId, setCurrentFileId] = useState("");
+  const [code, setCode] = useState<string>("");
   const router = useRouter();
   const { setAddUserMenuOpen } = useContext(ProjectPageContext);
-  const [code, setCode] = useState<string>("");
   const projectId = router.query?.projectId as string;
+  const fileId = currentFileId;
+
+  const handleFileIdChange = (id: string) => {
+    setCurrentFileId(id);
+  };
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, setAddUserMenuOpen);
-  const { mutate: updateProject, isLoading } =
-    api.project.updateProject.useMutation();
+
+  const {
+    mutate: getProject,
+    data: singleProjectData,
+    isSuccess,
+  } = api.project.getSingleProject.useMutation();
+  const { mutate: saveFile } = api.file.saveFile.useMutation();
+console.log(singleProjectData?.data)
   const {
     mutate: runCode,
-    data: compilerData,
+    data: runCodeResult,
     reset,
-  } = api.compiler.runCode.useMutation();
-  const {
-    mutate,
-    data,
-    isLoading: isProjectLoading,
-    isSuccess,
-  } = api.project.getSingleProject.useMutation({
-    onSuccess: (val) => {
-      setCode(val.data.content ?? "");
-    },
+  } = api.compiler.writeFileAndRun.useMutation();
+
+  singleProjectData?.data.files.map((el) => {
+    if (el.id === fileId) {
+      el.content = code;
+    }
+    return el;
   });
   const handleRunCode = () => {
-    runCode({ content: code });
+    if (singleProjectData?.data.files) {
+      runCode({ files: singleProjectData?.data.files, current: code });
+    }
   };
   //when redirected to diffrent project, reset terminal output
   //then fetch current project
   useEffect(() => {
     reset();
     if (projectId) {
-      mutate({ id: projectId as string });
+      getProject({ id: projectId });
     }
   }, [projectId]);
+
   const handleSubmit = () => {
     try {
       if (projectId) {
-        updateProject({ id: projectId, content: code });
+        saveFile({ id: fileId, content: code });
       }
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    fetch("/api/socket")
-      .then(() => {
-        const userId = localStorage.getItem("id");
-        socket = io();
-        connectToRoom({ socket, projectId, userId });
-      })
-      .catch((err) => console.log(err));
-  }, [projectId]);
-
-  if (isProjectLoading) {
-    return <Spinner />;
-  }
   return (
     <ProjectPageProvider>
-      <div className="flex w-screen bg-gray-200">
+      <div className="flex w-screen overflow-x-scroll bg-gray-200 scrollbar-hide">
         <div className="flex flex-col">
           <Navbar handleSaveFile={handleSubmit} handleRunCode={handleRunCode} />
           <div className="flex">
-            <Sidebar />
+            <Sidebar
+              isProjectFetched={isSuccess}
+              project={singleProjectData?.data}
+            />
             <div className="flex flex-col">
-              <ProjectBar title={data?.data.title}>
-                <div className="flex bg-gray-200">
-                  <div className="relative w-full">
-                    {isLoading && <Spinner />}
-                    {isSuccess && (
-                      <Editor code={code} setCode={setCode} socket={socket} />
-                    )}
-                  </div>
-                </div>
-              </ProjectBar>
-              <Terminal output={compilerData ?? ""} />
+              <AnotherProjectBar
+                setCode={setCode}
+                projectTitle={singleProjectData?.data.title}
+                isHomePage={false}
+              >
+                <File
+                  onFileChange={handleFileIdChange}
+                  setCode={setCode}
+                  code={code}
+                  reset={reset}
+                  runCodeResult={runCodeResult}
+                />
+              </AnotherProjectBar>
             </div>
           </div>
         </div>
@@ -95,4 +97,4 @@ const ProjectPage = () => {
   );
 };
 
-export default ProjectPage;
+export default FilePage;

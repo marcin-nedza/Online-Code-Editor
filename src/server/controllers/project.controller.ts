@@ -60,6 +60,7 @@ export const getAllProjectHandler = async ({
 }: {
   ctx: Context;
 }) => {
+    console.log('GET ALL PROJECTS --------------------------------')
   try {
     if (!user) {
       throw new TRPCError({

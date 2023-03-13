@@ -13,7 +13,7 @@ export const findUniqueProject = async (
 ) => {
   return (await prisma.project.findUnique({
     where,
-        include:{files:{orderBy:{createdAt:'desc'}}}
+        include:{files:{orderBy:{createdAt:'desc'}},colaborations:true}
   })) ;
 };
 

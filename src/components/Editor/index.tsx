@@ -38,7 +38,6 @@ const Editor = ({
   const [name, setName] = useState("");
   const { myKeymap, showElement, setShowElement, isLoading } =
     useSaveFile(fileId);
-
   // const cursorTooltipField = StateField.define<readonly Tooltip[]>({
   //   // create: getCursorTooltips,
   //   create(view) {

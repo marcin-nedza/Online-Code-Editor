@@ -1,19 +1,17 @@
 import { File, Prisma, Project } from "@prisma/client";
 import { useEffect } from "react";
-import { SimpleFile } from "../../schemas/file";
 import { TChangeStatus } from "../../schemas/project";
 import { api } from "../../utils/api";
 import Invitation from "./Invitation";
 import SingleProject from "./SingleProject";
 type Props = {
-  listOfProjects: (Project & {
+  project: (Project & {
     files: File[];
-  })[];
+  });
   isProjectFetched: boolean;
 };
-const Sidebar = ({ isProjectFetched, listOfProjects }: Props) => {
+const Sidebar = ({ isProjectFetched, project }: Props) => {
   const { mutate: changeStatus } = api.project.changeStatus.useMutation();
-  const { data, isSuccess } = api.project.getAllProject.useQuery();
   const {
     data: projects,
     mutate,
@@ -38,22 +36,21 @@ const Sidebar = ({ isProjectFetched, listOfProjects }: Props) => {
       <div className="flex flex-col justify-between text-center basis-3/4">
         <div className="h-1/2">
           <div className="flex h-[var(--sidebar-title-h)] items-center bg-main-bg">
-            <p className="">Projects</p>
+            <p className="">Project</p>
           </div>
           <div className="text-start">
             {isProjectFetched &&
-              listOfProjects.map((el) => (
                 <SingleProject
-                  key={el.id}
-                  title={el.title}
-                  id={el.id}
-                  files={el.files}
+                  key={project.id}
+                  title={project.title}
+                  id={project.id}
+                  files={project.files}
                 />
-              ))}
+              }
           </div>
         </div>
-        <div className="h-1/2">
-          <div className="flex h-[var(--sidebar-title-h)] items-center bg-main-bg ">
+        <div className="h-1/3">
+                    {/*  <div className="flex h-[var(--sidebar-title-h)] items-center bg-main-bg ">
             <p className="">Colaboration</p>
           </div>
           <div className="h-1/2 text-start">
@@ -66,7 +63,7 @@ const Sidebar = ({ isProjectFetched, listOfProjects }: Props) => {
                   files={el.project.files}
                 />
               ))}
-          </div>
+          </div> */}
           <div className="flex h-[var(--sidebar-title-h)] items-center bg-main-bg ">
             <p className="">Invitations</p>
           </div>

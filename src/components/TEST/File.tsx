@@ -22,7 +22,7 @@ type Props = {
   runCodeResult: string;
 };
 const File = ({ code, reset, runCodeResult, onFileChange, setCode }: Props) => {
-  const { tabId,isAddUserOpen } = useContext(ProjectPageContext);
+  const { tabId,isAddUserOpen, isEmpty } = useContext(ProjectPageContext);
   const fileId = tabId;
 
   useEffect(() => {
@@ -53,7 +53,6 @@ const File = ({ code, reset, runCodeResult, onFileChange, setCode }: Props) => {
   useEffect(() => {
     reset();
     if (fileId && !isAddUserOpen) {
-            console.log("ADD",isAddUserOpen)
       getFile({ id: fileId });
     }
   }, [fileId]);
@@ -64,7 +63,7 @@ const File = ({ code, reset, runCodeResult, onFileChange, setCode }: Props) => {
         <div className="relative min-h-[calc(100vh_-_(var(--navbar-h)_+_var(--sidebar-title-h)_+_var(--terminal-h)_+_var(--pathbar-h))_-_1px)] w-full bg-[#282c34]">
           {isFileLoading && <Spinner />}
           {isLoading && <Spinner />}
-          {isSuccess && (
+          {isSuccess && !isEmpty && (
             <Editor
               fileId={fileId}
               code={code}

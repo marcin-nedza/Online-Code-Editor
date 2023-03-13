@@ -28,6 +28,8 @@ type TProjectPageContext = {
     fromIndex: number,
     toIndex: number
   ) => SimpleFile[];
+  isEmpty: boolean;
+  setIsEmpty: Dispatch<SetStateAction<boolean>>;
 };
 export const ProjectPageContext = createContext<TProjectPageContext>({
   isAddUserOpen: false,
@@ -43,6 +45,8 @@ export const ProjectPageContext = createContext<TProjectPageContext>({
   activateFileTab: () => {},
   tabId: "",
   changeTabIndex: () => [],
+  isEmpty: false,
+  setIsEmpty: () => {},
 });
 type ProjectProps = {
   children: ReactNode;
@@ -54,18 +58,16 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
     "project"
   );
   const [fileTabsArray, setFileTabsArray] = useState<SimpleFile[]>([]);
+  const [isEmpty, setIsEmpty] = useState(false);
   const [tabId, setTabId] = useState("");
   const addFileTab = (file: SimpleFile) => {
-        console.log('ADDFILE',file)
     setTabId(file.id);
-            console.log('ARR',fileTabsArray)
     setFileTabsArray((prevFileTabs) => {
-            console.log('FCK')
-        prevFileTabs.map(el=>{
-                if(el.id==='manage'){
-                    setAddUserMenuOpen(false)
-                }
-            }) 
+      prevFileTabs.map((el) => {
+        if (el.id === "manage") {
+          setAddUserMenuOpen(false);
+        }
+      });
       const updatedFileTabs = prevFileTabs.map((prevFileTab) => ({
         ...prevFileTab,
         active: false,
@@ -74,10 +76,8 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
         ...file,
         active: true,
       });
-            console.log('updated',updatedFileTabs)
       return updatedFileTabs;
     });
-        console.log('END')
   };
 
   const activateFileTab = (id: string | undefined) => {
@@ -124,6 +124,8 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
         selectedOption,
         setAddUserMenuOpen,
         setSelectedOption,
+        isEmpty,
+        setIsEmpty,
       }}
     >
       {children}

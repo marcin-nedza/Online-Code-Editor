@@ -1,4 +1,3 @@
-import { NextCookies } from "next/dist/server/web/spec-extension/cookies";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "./utils/auth";
 
@@ -12,7 +11,10 @@ export async function middleware(req: NextRequest) {
     return;
   }
 
-  if (req.url.includes("/login") && verifiedToken) {
+  if (
+    (req.url.includes("/login") || req.url.includes("/register")) &&
+    verifiedToken
+  ) {
     return NextResponse.redirect(new URL("/home", req.url));
   }
 
@@ -22,5 +24,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/home", "/login","/test2/:projectId*"],
+  matcher: ["/home", "/login", "/project/:projectId*"],
 };

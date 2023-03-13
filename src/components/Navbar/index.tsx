@@ -39,8 +39,13 @@ const Navbar = ({ handleRunCode, handleSaveFile }: Props) => {
           </button>
           {openMenu && (
             <div className="absolute left-0 top-[26px] z-10 flex w-fit flex-col gap-2 bg-dark-accent p-3 text-xs">
-              <button onClick={saveFile} className="">
-                Save
+              <button
+                onClick={async() => {
+               await router.push('/home') 
+                }}
+                className="whitespace-nowrap"
+              >
+               Open/Create Project 
               </button>
               <button
                 onClick={() => {
@@ -54,6 +59,9 @@ const Navbar = ({ handleRunCode, handleSaveFile }: Props) => {
                 Manage Project
               </button>
               <button className="whitespace-nowrap">Show users</button>
+                            <button onClick={saveFile} className="">
+                                Save File
+                            </button>
             </div>
           )}
         </div>

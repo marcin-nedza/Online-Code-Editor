@@ -10,15 +10,16 @@ const File = ({ file }: Props) => {
 
   const {  reset } =
     api.compiler.writeFileAndRun.useMutation();
-  const { fileTabsArray, addFileTab, activateFileTab } =
+  const { fileTabsArray, addFileTab, activateFileTab,setIsEmpty } =
     useContext(ProjectPageContext);
   const redirect = async() => {
     if (!fileTabsArray?.find((el) => el.id === file.id)) {
       addFileTab({ id: file.id, title: file.title });
+            setIsEmpty(false)
         }
-
     if (fileTabsArray?.find((el) => el.id === file.id)) {
       activateFileTab(file.id);
+            setIsEmpty(false)
     }
         reset()
   };
