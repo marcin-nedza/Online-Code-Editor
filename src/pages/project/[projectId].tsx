@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Navbar, Sidebar } from "../../components";
 import AnotherProjectBar from "../../components/ProjectBar";
 import File from "../../components/TEST/File";
-import ManageProjectProvider, {ManageProjectContext} from "../../contexts/manageProjectContext";
+import ManageProjectProvider, { ManageProjectContext } from "../../contexts/manageProjectContext";
 import ProjectPageProvider, {
   ProjectPageContext,
 } from "../../contexts/projectPageContext";
@@ -14,7 +14,7 @@ const FilePage = () => {
   const [currentFileId, setCurrentFileId] = useState("");
   const [code, setCode] = useState<string>("");
   const router = useRouter();
-  const { setAddUserMenuOpen ,project} = useContext(ProjectPageContext);
+  const { setAddUserMenuOpen, project } = useContext(ProjectPageContext);
   const projectId = router.query?.projectId as string;
   const fileId = currentFileId;
 
@@ -57,7 +57,7 @@ const FilePage = () => {
     }
   }, [projectId]);
 
-    console.log('PPPPP',project)
+  console.log('PPPPP', project)
   const handleSubmit = () => {
     try {
       if (projectId) {
@@ -69,10 +69,10 @@ const FilePage = () => {
   };
   return (
     <ProjectPageProvider>
-      <div className="flex w-screen overflow-x-scroll bg-gray-200 scrollbar-hide">
+      <div className="flex w-screen  overflow-x-scroll bg-gray-200 scrollbar-hide h-[calc(100vh)] ">
         <div className="flex flex-col">
           <Navbar handleSaveFile={handleSubmit} handleRunCode={handleRunCode} />
-          <div className="flex">
+          <div className="flex h-[calc(100vh_-_var(--navbar-h))]">
             <Sidebar
               isProjectFetched={isSuccess}
               project={singleProjectData?.data}

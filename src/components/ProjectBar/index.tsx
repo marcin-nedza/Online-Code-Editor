@@ -1,5 +1,5 @@
-import {ColaboratorsOnProject, Project} from "@prisma/client";
-import React, {  useContext } from "react";
+import { ColaboratorsOnProject, Project } from "@prisma/client";
+import React, { useContext } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
 import { api } from "../../utils/api";
 import ManageProject from "./ManageProject";
@@ -18,7 +18,7 @@ const AnotherProjectBar = ({
   children,
   projectTitle,
   isHomePage,
-    project
+  project
 }: Props) => {
   const {
     fileTabsArray,
@@ -29,12 +29,12 @@ const AnotherProjectBar = ({
     isAddUserOpen,
     setAddUserMenuOpen,
     setIsEmpty,
-        setProject,
-        
+    setProject,
+
   } = useContext(ProjectPageContext);
   const currentFileTitle = fileTabsArray.filter((el) => el.active)[0]?.title;
   const { mutate: deleteFile } = api.file.deleteFile.useMutation();
-setProject(project)
+  setProject(project)
   const handleCloseTab = (fileId: string) => {
     const index = fileTabsArray.findIndex((file) => file.id === fileId);
     closeTab(fileId);
@@ -65,7 +65,7 @@ setProject(project)
     fileTitle: currentFileTitle,
   };
   return (
-    <div className="">
+    <div className=" h-full">
       <div
         className="flex  h-[var(--sidebar-title-h)]  w-full items-center
                         bg-dark-bg text-xs text-white"
