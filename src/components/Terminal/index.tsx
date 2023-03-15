@@ -26,9 +26,8 @@ const Terminal = ({ output }: Props) => {
       <p
         className={`
                scrollbar-hide 
-               h-[calc(var(--terminal-h)_-_var(--terminal-title-h)_+_20px)] 
-               xl:h-[calc(var(--terminal-h)_-_var(--terminal-title-h))] 
-               w-[calc(100vw_-_var(--sidebar-w))] overflow-y-scroll 
+               h-[calc(var(--terminal-h)_-_var(--terminal-title-h))] 
+                            w-[calc(100vw_-_var(--sidebar-w))] overflow-y-scroll 
                whitespace-pre-wrap bg-main-bg 
                pl-4 text-xs text-white`}
       >

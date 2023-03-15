@@ -1,20 +1,26 @@
-import {ColaboratorsOnProject, Project} from "@prisma/client";
+import { ColaboratorsOnProject, Project } from "@prisma/client";
 import React, { useContext, useState } from "react";
-import {ManageProjectContext} from "../../contexts/manageProjectContext";
-import {ProjectPageContext} from "../../contexts/projectPageContext";
+import { ManageProjectContext } from "../../contexts/manageProjectContext";
+import { ProjectPageContext } from "../../contexts/projectPageContext";
 import AssingUsers from "./AssingUsers";
 import ListOfUsers from "./ListOfUsers";
 
-type Props={
-    isHomePage:boolean;
-  project: (Project & {
-    colaborations: ColaboratorsOnProject[];
-  }) | undefined;
-}
-const ManageProject = ({isHomePage,project}:Props) => {
-
-  const   {project:test} = useContext(ManageProjectContext);
-    console.log("TEST",test)
+type Props = {
+  isHomePage: boolean;
+  project:
+    | (Project & {
+        colaborations: (ColaboratorsOnProject & {
+          user: {
+            username: string;
+            email: string;
+          };
+        })[];
+      })
+    | undefined;
+};
+const ManageProject = ({ isHomePage, project }: Props) => {
+  const { project: test } = useContext(ManageProjectContext);
+  console.log("TEST", test);
   type Option = "assign" | "list";
   const [activeOption, setActiveOption] = useState<Option>("assign");
   return (
@@ -53,7 +59,7 @@ const ManageProject = ({isHomePage,project}:Props) => {
       </div>
       <div className="p-2 basis-4/5">
         {activeOption === "assign" && <AssingUsers />}
-        {activeOption === "list" && <ListOfUsers />}
+        {activeOption === "list" && <ListOfUsers project={project}/>}
       </div>
     </div>
   );

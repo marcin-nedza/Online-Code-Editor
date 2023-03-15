@@ -30,7 +30,7 @@ const Navbar = ({ handleRunCode, handleSaveFile }: Props) => {
   };
   return (
     <div
-      className="flex h-[var(--navbar-h)] lg:h-[calc(var(--navbar-h)_+_3rem)] w-full justify-between bg-secondary  text-sm text-white"
+      className="flex h-[var(--navbar-h)] lg:min-h-[calc(var(--navbar-h)_+_1rem)] lg:text-lg lg:px-4 w-full justify-between bg-secondary  text-sm text-white"
     >
       <div className="flex items-center">
         <div ref={ref} className="relative px-2 py-1 hover:bg-accent">

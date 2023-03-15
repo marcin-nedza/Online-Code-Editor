@@ -29,12 +29,11 @@ const AnotherProjectBar = ({
     isAddUserOpen,
     setAddUserMenuOpen,
     setIsEmpty,
-    setProject,
 
   } = useContext(ProjectPageContext);
   const currentFileTitle = fileTabsArray.filter((el) => el.active)[0]?.title;
   const { mutate: deleteFile } = api.file.deleteFile.useMutation();
-  setProject(project)
+    //@ts-expect-error easdsa
   const handleCloseTab = (fileId: string) => {
     const index = fileTabsArray.findIndex((file) => file.id === fileId);
     closeTab(fileId);
@@ -65,7 +64,7 @@ const AnotherProjectBar = ({
     fileTitle: currentFileTitle,
   };
   return (
-    <div className=" h-full">
+    <div className="h-full">
       <div
         className="flex  h-[var(--sidebar-title-h)]  w-full items-center
                         bg-dark-bg text-xs text-white"
@@ -94,9 +93,9 @@ const AnotherProjectBar = ({
           </div>
         ))}
       </div>
-      {currentFileTitle && !isAddUserOpen && (
+            {/* {currentFileTitle && !isAddUserOpen && ( */}
         <Pathbar projectData={projectData} handleDeleteFile={handleDeleteTab} />
-      )}
+      {/* )} */}
 
       {isAddUserOpen ? <ManageProject project={project} isHomePage={isHomePage} /> : children}
     </div>

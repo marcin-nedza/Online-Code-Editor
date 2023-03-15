@@ -14,7 +14,7 @@ const FilePage = () => {
   const [currentFileId, setCurrentFileId] = useState("");
   const [code, setCode] = useState<string>("");
   const router = useRouter();
-  const { setAddUserMenuOpen, project } = useContext(ProjectPageContext);
+  const { setAddUserMenuOpen } = useContext(ProjectPageContext);
   const projectId = router.query?.projectId as string;
   const fileId = currentFileId;
 
@@ -57,7 +57,6 @@ const FilePage = () => {
     }
   }, [projectId]);
 
-  console.log('PPPPP', project)
   const handleSubmit = () => {
     try {
       if (projectId) {
