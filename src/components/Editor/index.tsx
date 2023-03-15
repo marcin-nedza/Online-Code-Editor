@@ -14,8 +14,7 @@ import {
   basicExtensions,
   cursorTooltipBaseTheme,
   cursorTooltipHidden,
-  TooltipDisplay,
-    cursorTooltipField,getCursorTooltips
+    cursorTooltipField
 } from "./basicExtensions";
 import { useSaveFile } from "./keyBindings";
 

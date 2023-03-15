@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useContext, useState } from "react";
+import {ColaboratorsOnProject, Project} from "@prisma/client";
+import React, {  useContext } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
 import { api } from "../../utils/api";
 import ManageProject from "./ManageProject";
@@ -8,14 +9,16 @@ type Props = {
   children: React.ReactNode;
   projectTitle: string;
   isHomePage: boolean;
-  setCode: Dispatch<SetStateAction<string>>;
+  project: (Project & {
+    colaborations: ColaboratorsOnProject[];
+  }) | undefined;
 };
 
 const AnotherProjectBar = ({
   children,
   projectTitle,
   isHomePage,
-  setCode,
+    project
 }: Props) => {
   const {
     fileTabsArray,
@@ -26,14 +29,15 @@ const AnotherProjectBar = ({
     isAddUserOpen,
     setAddUserMenuOpen,
     setIsEmpty,
-        isEmpty
+        setProject,
+        
   } = useContext(ProjectPageContext);
   const currentFileTitle = fileTabsArray.filter((el) => el.active)[0]?.title;
   const { mutate: deleteFile } = api.file.deleteFile.useMutation();
+setProject(project)
   const handleCloseTab = (fileId: string) => {
     const index = fileTabsArray.findIndex((file) => file.id === fileId);
     closeTab(fileId);
-
     if (index === 0 && fileTabsArray.length > 1) {
       activateFileTab(fileTabsArray[1]?.id);
       setIsEmpty(false);
@@ -94,7 +98,7 @@ const AnotherProjectBar = ({
         <Pathbar projectData={projectData} handleDeleteFile={handleDeleteTab} />
       )}
 
-      {isAddUserOpen ? <ManageProject isHomePage={isHomePage} /> : children}
+      {isAddUserOpen ? <ManageProject project={project} isHomePage={isHomePage} /> : children}
     </div>
   );
 };

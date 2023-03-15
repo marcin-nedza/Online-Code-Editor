@@ -1,3 +1,4 @@
+import {ColaboratorsOnProject, Project,User} from "@prisma/client";
 import React, {
   createContext,
   Dispatch,
@@ -10,7 +11,13 @@ type SimpleFile = {
   title: string;
   active?: boolean;
 };
+type TProject = (Project & {
+    colaborations: (ColaboratorsOnProject &{ user:User})[];
+}) | undefined;
+
 type TProjectPageContext = {
+  project: TProject
+    setProject: Dispatch<SetStateAction<TProject>>
   isAddUserOpen: boolean;
   setAddUserMenuOpen: Dispatch<SetStateAction<boolean>>;
   selectedOption: "project" | "option";
@@ -47,7 +54,11 @@ export const ProjectPageContext = createContext<TProjectPageContext>({
   changeTabIndex: () => [],
   isEmpty: false,
   setIsEmpty: () => {},
+ project: undefined,
+    setProject: () => { },
+
 });
+
 type ProjectProps = {
   children: ReactNode;
 };
@@ -60,6 +71,7 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
   const [fileTabsArray, setFileTabsArray] = useState<SimpleFile[]>([]);
   const [isEmpty, setIsEmpty] = useState(false);
   const [tabId, setTabId] = useState("");
+ const [project, setProject] = useState<TProject>()
   const addFileTab = (file: SimpleFile) => {
     setTabId(file.id);
     setFileTabsArray((prevFileTabs) => {
@@ -126,6 +138,7 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
         setSelectedOption,
         isEmpty,
         setIsEmpty,
+                project,setProject
       }}
     >
       {children}

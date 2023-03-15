@@ -1,23 +1,33 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { api } from "../../utils/api";
+import Spinner from "../Spinner";
 
 const AssingUsers = () => {
   const router = useRouter();
   const projectId = router.query?.projectId as string;
-  const [errorMsg, setErrorMsg] = useState("");
+  const [responseMsg, setResponseMsg] = useState("");
   const [email, setEmail] = useState("");
-  const { data, mutate, isError, reset } =
-    api.project.assignUserToProject.useMutation();
-  const handleSubmit = (e) => {
+  const {
+    mutate: assignUserToProject,
+    isError,
+    isSuccess,
+    isLoading,
+    reset,
+  } = api.project.assignUserToProject.useMutation();
+  const handleSubmit = (e: any) => {
     e.preventDefault();
 
     try {
-      mutate(
+      assignUserToProject(
         { email: email, projectId: projectId },
         {
           onError: (message) => {
-            setErrorMsg(message.message);
+            setResponseMsg(message.message);
+          },
+          onSuccess: () => {
+            setResponseMsg("Invitation sent to user");
+            setEmail("");
           },
         }
       );
@@ -36,15 +46,27 @@ const AssingUsers = () => {
               reset();
               setEmail(e.target.value);
             }}
+            value={email}
             placeholder="email"
             className="px-2 outline-none bg-accent2 caret-white"
           />
         </form>
       </div>
+      {isLoading && (
+        <div className="flex items-end pl-5">
+          <Spinner size="sm" inline={true} />
+        </div>
+      )}
       {isError && (
         <div className="flex flex-col justify-end pl-3">
           <p>ERROR</p>
-          <p className="text-xs">{errorMsg}</p>
+          <p className="text-xs">{responseMsg}</p>
+        </div>
+      )}
+      {isSuccess && (
+        <div className="flex flex-col justify-end pl-3">
+          <p>Success</p>
+          <p className="text-xs">{responseMsg}</p>
         </div>
       )}
     </div>

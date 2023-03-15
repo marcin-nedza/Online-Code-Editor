@@ -1,6 +1,6 @@
 import { File, Prisma, Project } from "@prisma/client";
 import { useEffect } from "react";
-import { TChangeStatus } from "../../schemas/project";
+import { TChangeStatus, TChangeStatus2 } from "../../schemas/project";
 import { api } from "../../utils/api";
 import Invitation from "./Invitation";
 import SingleProject from "./SingleProject";
@@ -23,7 +23,7 @@ const Sidebar = ({ isProjectFetched, project }: Props) => {
     mutate: findAcceptedProjects,
     isSuccess: isAcceptedProject,
   } = api.project.getAssignedProjectByStatus.useMutation();
-  const handleChangePendingProject = ({ projectId, status }: TChangeStatus) => {
+  const handleChangePendingProject = ({ projectId, status }: TChangeStatus2) => {
     changeStatus({ projectId, status });
   };
   useEffect(() => {

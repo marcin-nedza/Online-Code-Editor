@@ -2,11 +2,10 @@ import { useRouter } from "next/router";
 import React, { useRef } from "react";
 import { Navbar, Sidebar } from "../../components";
 import AnotherProjectBar from "../../components/ProjectBar";
-import ProjectPageProvider from "../../contexts/projectPageContext";
 import { api } from "../../utils/api";
 
 const index = () => {
-  const { data ,refetch} = api.project.getAllProject.useQuery();
+  const { data ,refetch, isFetching,isLoading} = api.project.getAllProject.useQuery();
   const { mutate: createProject, isSuccess: isCreatedProjectSuccess } =
     api.project.createProject.useMutation();
 
@@ -29,7 +28,6 @@ const index = () => {
     await router.push(`/project/${id}`);
   };
   return (
-    <ProjectPageProvider>
       <div className="flex w-screen bg-gray-200">
         <div className="flex flex-col w-full">
           <Navbar />
@@ -74,7 +72,6 @@ const index = () => {
           </div>
         </div>
       </div>
-    </ProjectPageProvider>
   );
 };
 

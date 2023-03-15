@@ -1,8 +1,20 @@
-import React, { useState } from "react";
+import {ColaboratorsOnProject, Project} from "@prisma/client";
+import React, { useContext, useState } from "react";
+import {ManageProjectContext} from "../../contexts/manageProjectContext";
+import {ProjectPageContext} from "../../contexts/projectPageContext";
 import AssingUsers from "./AssingUsers";
 import ListOfUsers from "./ListOfUsers";
 
-const ManageProject = ({ isHomePage }: { isHomePage: boolean }) => {
+type Props={
+    isHomePage:boolean;
+  project: (Project & {
+    colaborations: ColaboratorsOnProject[];
+  }) | undefined;
+}
+const ManageProject = ({isHomePage,project}:Props) => {
+
+  const   {project:test} = useContext(ManageProjectContext);
+    console.log("TEST",test)
   type Option = "assign" | "list";
   const [activeOption, setActiveOption] = useState<Option>("assign");
   return (

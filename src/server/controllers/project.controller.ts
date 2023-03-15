@@ -60,7 +60,6 @@ export const getAllProjectHandler = async ({
 }: {
   ctx: Context;
 }) => {
-    console.log('GET ALL PROJECTS --------------------------------')
   try {
     if (!user) {
       throw new TRPCError({
@@ -69,10 +68,15 @@ export const getAllProjectHandler = async ({
       });
     }
     const projects = await getAllProject(user?.id);
-        const assingedProjects=await getAssignedProjectByStatus({userId:user.id,status:'ACCEPTED'})
+    const assingedProjects = await getAssignedProjectByStatus({
+      userId: user.id,
+      status: "ACCEPTED",
+    });
+        const temp:Project[] =[]
+        assingedProjects.map(el=>temp.push(el.project))
     return {
       status: "success",
-      data: projects ,
+      data: [...projects,...temp],
     };
   } catch (error) {
     throw error;
@@ -169,7 +173,7 @@ export const assignUserToProjectHandler = async ({
 }) => {
   try {
     const colaborator = await findUniqueUser({ email: email });
-
+   console.log({email,colaborator}) 
     if (!colaborator) {
       throw new TRPCError({
         code: "NOT_FOUND",
@@ -199,7 +203,10 @@ export const assignUserToProjectHandler = async ({
 
 export const changeProjectStatusHandler = async (input: TChangeStatus) => {
   try {
+        console.log('asdasd',input)
     const project = await changeColaboratorStatusService(input);
+        
+        console.log('proj',project)
     if (!project) {
       throw new TRPCError({
         code: "NOT_FOUND",

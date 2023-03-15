@@ -5,9 +5,7 @@ import { Tooltip, keymap, lineNumbers, EditorView,showTooltip } from "@codemirro
 import { basicSetup } from "codemirror";
 import { solarizedDark } from "./darkstyle";
 import {
-  Compartment,
   EditorState,
-  Extension,
   StateField,
 } from "@codemirror/state";
 
@@ -129,9 +127,7 @@ function getCursorTooltips({
 }
 export {
   basicExtensions,
-  TooltipDisplay,
   cursorTooltipHidden,
   cursorTooltipBaseTheme,
   cursorTooltipField,
-  getCursorTooltips,
 };

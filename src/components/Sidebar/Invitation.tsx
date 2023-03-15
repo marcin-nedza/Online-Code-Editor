@@ -39,7 +39,10 @@ const Invitation = ({ id, title, onClick }: Props) => {
         { open && (
           <div className="flex gap-4 pb-1 pl-2 text-[1rem]">
             <p
-              onClick={() => onClick({ projectId: id, status: "ACCEPTED" })}
+              onClick={() => {
+                                console.log({id})
+              onClick({ projectId: id, status: "ACCEPTED" })
+              }}
               className="p-0.5 px-1 hover:bg-dark-bg"
             >
               &#x2713;

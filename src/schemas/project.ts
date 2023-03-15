@@ -23,12 +23,16 @@ export const assignUserToProjectSchema=z.object({
 
 export const getAssignedProjectSchema=z.object({
     projectId:z.string(),
-    userId:z.string().optional()
+    userId:z.string()
 })
+
 export const changeColaboratorStatusSchema=getAssignedProjectSchema.extend({
     status:z.enum(['PENDING','ACCEPTED','REJECTED']),
 })
-
+export const changeStatus=z.object({
+    projectId:z.string(),
+    status:z.enum(['PENDING','ACCEPTED','REJECTED']),
+})
 export const getAssignedProjectByStatusSchema=z.object({
     userId:z.string().optional(),
     status:z.enum(['PENDING','ACCEPTED','REJECTED']),
@@ -43,3 +47,5 @@ export type TAssignUserToProject = z.infer<typeof assignUserToProjectSchema>
 export type TGetAssignedProjects = z.infer<typeof getAssignedProjectSchema>
 export type TGetAssignedProjectsByStatus = z.infer<typeof getAssignedProjectByStatusSchema>
 export type TChangeStatus=z.infer<typeof changeColaboratorStatusSchema>
+
+export type TChangeStatus2=z.infer<typeof changeStatus>

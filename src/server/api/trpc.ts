@@ -9,6 +9,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions&{user?:Us
     let user:User | null
     if(token && token.length>0) {
          user = decodeJwt(token).sub
+        console.log("USER",user)
     }else{
         user=null
     }

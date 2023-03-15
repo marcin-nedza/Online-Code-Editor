@@ -56,16 +56,20 @@ export const assignUserToProjectService = async ({
   projectId,
 }: TGetAssignedProjects) => {
   const collaboration = { projectId, userId };
+        
+const project=await findUniqueProject({id:projectId})
 
   const isAssigned = await findColaborators({
     userId_projectId: collaboration,
   });
-  if (isAssigned) {
+
+  if (isAssigned || project?.userId===userId) {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "User already assigned to project",
     });
   }
+
   try {
     return await assignUserToProject(collaboration);
   } catch (error) {
