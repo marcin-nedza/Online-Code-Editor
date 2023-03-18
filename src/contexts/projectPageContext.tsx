@@ -1,4 +1,4 @@
-import {ColaboratorsOnProject, Project,User} from "@prisma/client";
+import { ColaboratorsOnProject, Project, User } from "@prisma/client";
 import React, {
   createContext,
   Dispatch,
@@ -11,13 +11,15 @@ type SimpleFile = {
   title: string;
   active?: boolean;
 };
-type TProject = (Project & {
-    colaborations: (ColaboratorsOnProject &{ user:User})[];
-}) | undefined;
+type TProject =
+  | (Project & {
+      colaborations: (ColaboratorsOnProject & { user: User })[];
+    })
+  | undefined;
 
 type TProjectPageContext = {
-  project: TProject
-    setProject: Dispatch<SetStateAction<TProject>>
+  project: TProject;
+  setProject: Dispatch<SetStateAction<TProject>>;
   isAddUserOpen: boolean;
   setAddUserMenuOpen: Dispatch<SetStateAction<boolean>>;
   selectedOption: "project" | "option";
@@ -54,9 +56,8 @@ export const ProjectPageContext = createContext<TProjectPageContext>({
   changeTabIndex: () => [],
   isEmpty: false,
   setIsEmpty: () => {},
- project: undefined,
-    setProject: () => { },
-
+  project: undefined,
+  setProject: () => {},
 });
 
 type ProjectProps = {
@@ -71,25 +72,29 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
   const [fileTabsArray, setFileTabsArray] = useState<SimpleFile[]>([]);
   const [isEmpty, setIsEmpty] = useState(false);
   const [tabId, setTabId] = useState("");
- const [project, setProject] = useState<TProject>()
+  const [project, setProject] = useState<TProject>();
   const addFileTab = (file: SimpleFile) => {
-    setTabId(file.id);
-    setFileTabsArray((prevFileTabs) => {
-      prevFileTabs.map((el) => {
-        if (el.id === "manage") {
-          setAddUserMenuOpen(false);
-        }
+    const manageFileExists = fileTabsArray.some((tab) => tab.id === "manage");
+    //allow only one manage project tab to be open
+    if (!manageFileExists || file.id !== "manage") {
+      setTabId(file.id);
+      setFileTabsArray((prevFileTabs) => {
+        prevFileTabs.map((el) => {
+          if (el.id === "manage") {
+            setAddUserMenuOpen(false);
+          }
+        });
+        const updatedFileTabs = prevFileTabs.map((prevFileTab) => ({
+          ...prevFileTab,
+          active: false,
+        }));
+        updatedFileTabs.push({
+          ...file,
+          active: true,
+        });
+        return updatedFileTabs;
       });
-      const updatedFileTabs = prevFileTabs.map((prevFileTab) => ({
-        ...prevFileTab,
-        active: false,
-      }));
-      updatedFileTabs.push({
-        ...file,
-        active: true,
-      });
-      return updatedFileTabs;
-    });
+    }
   };
 
   const activateFileTab = (id: string | undefined) => {
@@ -138,7 +143,8 @@ const ProjectPageProvider = ({ children }: ProjectProps) => {
         setSelectedOption,
         isEmpty,
         setIsEmpty,
-                project,setProject
+        project,
+        setProject,
       }}
     >
       {children}

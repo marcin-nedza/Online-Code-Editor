@@ -4,6 +4,7 @@ import {
   changeStatus,
   createProjectInputSchema,
   getAssignedProjectByStatusSchema,
+  getAssignedProjectSchema,
   getOneProjectSchema,
   updateProjectSchema,
 } from "../../../schemas/project";
@@ -11,6 +12,7 @@ import {
   assignUserToProjectHandler,
   changeProjectStatusHandler,
   createProjectHandler,
+  deleteColaboration,
   getAllAssignedProjectsHandler,
   getAllProjectHandler,
   getOneProjectHandler,
@@ -65,4 +67,8 @@ export const projectRouter = createTRPCRouter({
       })
     }
     ),
+
+    deleteColaboration:publicProcedure
+    .input(getAssignedProjectSchema)
+    .mutation(({input})=>deleteColaboration(input))
 });

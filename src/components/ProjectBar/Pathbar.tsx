@@ -13,17 +13,18 @@ type Props = {
 const Pathbar = ({ projectData, handleDeleteFile }: Props) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  console.log(projectData.fileId);
   useOutsideAlerter(ref, setOpen);
   return (
     <div
-      className="flex  h-[var(--pathbar-h)] items-center
+      className="flex  h-[var(--sidebar-title-h)] items-center
                     justify-between border-b-[1px] border-accent2 bg-light-bg text-xs text-white "
     >
       <p className="ml-3">{` ${projectData.projectTitle}>${
         projectData.fileTitle ?? ""
       }`}</p>
       <div className="relative">
-        {projectData.fileTitle && (
+        {projectData.fileTitle && projectData.fileId !== "manage" && (
           <div
             onClick={() => setOpen(!open)}
             className="mr-3 text-lg cursor-pointer"

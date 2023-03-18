@@ -36,7 +36,7 @@ const index = () => {
               <AnotherProjectBar projectTitle={""} isHomePage={true}>
                 <div className="flex bg-gray-200">
                   <div
-                    className="relative min-h-[calc(100vh_-_(var(--navbar-h)_+_var(--sidebar-title-h)))]
+                    className="relative min-h-[calc(100vh_-_(var(--navbar-h)_+_var(--sidebar-title-h)_+_var(--sidebar-title-h)))]
                                w-[100vw] bg-[#282c34] "
                   >
                     <div className="flex items-center justify-center h-full">

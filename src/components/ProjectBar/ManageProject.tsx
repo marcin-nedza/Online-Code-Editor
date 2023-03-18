@@ -1,12 +1,11 @@
 import { ColaboratorsOnProject, Project } from "@prisma/client";
-import React, { useContext, useState } from "react";
-import { ManageProjectContext } from "../../contexts/manageProjectContext";
-import { ProjectPageContext } from "../../contexts/projectPageContext";
+import { useState } from "react";
 import AssingUsers from "./AssingUsers";
 import ListOfUsers from "./ListOfUsers";
 
 type Props = {
   isHomePage: boolean;
+    fetchProject:()=>void;
   project:
     | (Project & {
         colaborations: (ColaboratorsOnProject & {
@@ -18,10 +17,10 @@ type Props = {
       })
     | undefined;
 };
-const ManageProject = ({ isHomePage, project }: Props) => {
-  const { project: test } = useContext(ManageProjectContext);
-  console.log("TEST", test);
+const ManageProject = ({ isHomePage, project ,fetchProject}: Props) => {
+
   type Option = "assign" | "list";
+
   const [activeOption, setActiveOption] = useState<Option>("assign");
   return (
     <div
@@ -59,7 +58,7 @@ const ManageProject = ({ isHomePage, project }: Props) => {
       </div>
       <div className="p-2 basis-4/5">
         {activeOption === "assign" && <AssingUsers />}
-        {activeOption === "list" && <ListOfUsers project={project}/>}
+        {activeOption === "list" && <ListOfUsers fetchProject={fetchProject} project={project}/>}
       </div>
     </div>
   );

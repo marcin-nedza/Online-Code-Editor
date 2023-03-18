@@ -12,7 +12,7 @@ type Props = {
 };
 const SingleProject = ({ id, title, files }: Props) => {
   const isFilesPresent = files?.length > 0;
-    const router=useRouter()
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [folderOpen, setFolderOpen] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -35,7 +35,7 @@ const SingleProject = ({ id, title, files }: Props) => {
   return (
     <div className="">
       <div
-        className={`relative w-full cursor-pointer  border hover:bg-accent2 ${
+        className={`relative h-[var(--sidebar-title-h)] w-full cursor-pointer  border hover:bg-accent2 ${
           folderOpen ? "border-accent" : "border-transparent"
         }`}
       >
@@ -54,7 +54,11 @@ const SingleProject = ({ id, title, files }: Props) => {
                             after:border-r-transparent hover:before:visible hover:after:visible"
           data-tip={title}
         >
-          <div className={`flex ${folderOpen ? "bg-accent2" : ""}`}>
+          <div
+            className={`flex h-[calc(var(--sidebar-title-h)_-_1px)] items-center justify-center ${
+              folderOpen ? "border-b-accent  bg-accent2 " : ""
+            }`}
+          >
             <p
               onClick={() => {
                 setFolderOpen(!folderOpen);

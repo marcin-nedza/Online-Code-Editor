@@ -3,7 +3,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Navbar, Sidebar } from "../../components";
 import AnotherProjectBar from "../../components/ProjectBar";
 import File from "../../components/TEST/File";
-import ManageProjectProvider, { ManageProjectContext } from "../../contexts/manageProjectContext";
 import ProjectPageProvider, {
   ProjectPageContext,
 } from "../../contexts/projectPageContext";
@@ -15,6 +14,7 @@ const FilePage = () => {
   const [code, setCode] = useState<string>("");
   const router = useRouter();
   const { setAddUserMenuOpen } = useContext(ProjectPageContext);
+
   const projectId = router.query?.projectId as string;
   const fileId = currentFileId;
 
@@ -28,9 +28,10 @@ const FilePage = () => {
     mutate: getProject,
     data: singleProjectData,
     isSuccess,
+
   } = api.project.getSingleProject.useMutation();
   const { mutate: saveFile } = api.file.saveFile.useMutation();
-  console.log(singleProjectData?.data);
+
   const {
     mutate: runCode,
     data: runCodeResult,
@@ -43,6 +44,9 @@ const FilePage = () => {
     }
     return el;
   });
+    const fetchProject=()=>{
+        getProject({id:projectId})
+    }
   const handleRunCode = () => {
     if (singleProjectData?.data.files) {
       runCode({ files: singleProjectData?.data.files, current: code });
@@ -53,7 +57,8 @@ const FilePage = () => {
   useEffect(() => {
     reset();
     if (projectId) {
-      getProject({ id: projectId });
+      // getProject({ id: projectId });
+        fetchProject()
     }
   }, [projectId]);
 
@@ -83,6 +88,7 @@ const FilePage = () => {
                 projectTitle={singleProjectData?.data.title}
                 isHomePage={false}
                 project={singleProjectData?.data}
+                                fetchProject={fetchProject}
               >
                 <File
                   onFileChange={handleFileIdChange}

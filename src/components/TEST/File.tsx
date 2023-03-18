@@ -60,7 +60,7 @@ const File = ({ code, reset, runCodeResult, onFileChange, setCode }: Props) => {
   return (
     <div className="">
       <div className="flex bg-gray-200">
-        <div className="relative min-h-[calc(100vh_-_(var(--navbar-h)_+_var(--sidebar-title-h)_+_var(--terminal-h)_+_var(--pathbar-h))_-_1px)] w-full bg-[#282c34]">
+        <div className="relative min-h-[calc(100vh_-_(var(--navbar-h)_+_var(--sidebar-title-h)_+_var(--terminal-h)_+_var(--sidebar-title-h))_-_1px)] w-full bg-[#282c34]">
           {isFileLoading && <Spinner />}
           {isLoading && <Spinner />}
           {isSuccess && !isEmpty && (

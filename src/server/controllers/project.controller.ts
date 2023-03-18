@@ -16,6 +16,7 @@ import {
   assignUserToProjectService,
   changeColaboratorStatusService,
   createProjectService,
+  deleteColaboratorsOnProjectService,
   getAllProject,
   getAssignedProjectByStatus,
   saveProject,
@@ -228,3 +229,22 @@ export const changeProjectStatusHandler = async (input: TChangeStatus) => {
     }
   }
 };
+export const deleteColaboration = async(input:TGetAssignedProjects)=>{
+    try {
+        console.log('@@@',input)
+       await deleteColaboratorsOnProjectService({projectId:input.projectId,userId:input.userId}) 
+        return{
+            status:'success',
+            data:{}
+        }
+    } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    } else {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to change project status",
+      });
+    }
+    }
+}

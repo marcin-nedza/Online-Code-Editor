@@ -84,3 +84,10 @@ export const changeColaboratorStatus = async (
     data: { status },
   });
 };
+
+
+export const deleteColaboratorsOnProject= async(
+    where:Prisma.ColaboratorsOnProjectWhereUniqueInput
+)=>{
+    return prisma.colaboratorsOnProject.delete({where})
+}

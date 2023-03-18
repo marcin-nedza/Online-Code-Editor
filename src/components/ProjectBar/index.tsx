@@ -9,6 +9,7 @@ type Props = {
   children: React.ReactNode;
   projectTitle: string;
   isHomePage: boolean;
+    fetchProject:()=>void;
   project: (Project & {
     colaborations: ColaboratorsOnProject[];
   }) | undefined;
@@ -18,7 +19,8 @@ const AnotherProjectBar = ({
   children,
   projectTitle,
   isHomePage,
-  project
+  project,
+    fetchProject
 }: Props) => {
   const {
     fileTabsArray,
@@ -33,7 +35,7 @@ const AnotherProjectBar = ({
   } = useContext(ProjectPageContext);
   const currentFileTitle = fileTabsArray.filter((el) => el.active)[0]?.title;
   const { mutate: deleteFile } = api.file.deleteFile.useMutation();
-    //@ts-expect-error easdsa
+
   const handleCloseTab = (fileId: string) => {
     const index = fileTabsArray.findIndex((file) => file.id === fileId);
     closeTab(fileId);
@@ -97,7 +99,7 @@ const AnotherProjectBar = ({
         <Pathbar projectData={projectData} handleDeleteFile={handleDeleteTab} />
       {/* )} */}
 
-      {isAddUserOpen ? <ManageProject project={project} isHomePage={isHomePage} /> : children}
+      {isAddUserOpen ? <ManageProject fetchProject={fetchProject} project={project} isHomePage={isHomePage} /> : children}
     </div>
   );
 };
