@@ -1,4 +1,5 @@
 import { ColaboratorsOnProject, File, Project } from "@prisma/client";
+import { RefetchOptions, RefetchQueryFilters } from "@tanstack/react-query";
 import {
   createContext,
   Dispatch,
@@ -32,14 +33,30 @@ type ManageProjectContextType = {
   fetchProject: (projectId: string) => void;
   result: Result | undefined;
   isSuccess: boolean;
+  getOneProject: (projectId: string) => {
+    data: {
+        status: string;
+        data: Project & {
+            colaborations: (ColaboratorsOnProject & {
+                user: {
+                    username: string;
+                    email: string;
+                };
+            })[];
+            files: File[];
+        };
+    } | undefined;    refetch: any;
+    isSuccess: boolean;
+  };
 };
 
 export const ManageProjectContext = createContext<ManageProjectContextType>({
   project: undefined,
   setProject: () => {},
-  fetchProject: () =>{},
+  fetchProject: () => {},
   result: undefined,
   isSuccess: false,
+  getOneProject: () => {},
 });
 
 type Props = {
@@ -48,9 +65,14 @@ type Props = {
 const ManageProjectProvider = ({ children }: Props) => {
   const [project, setProject] = useState<TProject>();
   const [result, setResult] = useState<Result>();
-  const { mutate: getProject, isSuccess, } =
+  const { mutate: getProject, isSuccess } =
     api.project.getSingleProject.useMutation();
-
+  const getOneProject = (projectId: string) => {
+    const { data, refetch, isSuccess } = api.project.getProjectQuery.useQuery({
+      id: projectId,
+    });
+    return { data, refetch, isSuccess };
+  };
   const fetchProject = (projectId: string) => {
     getProject(
       { id: projectId },
@@ -69,6 +91,7 @@ const ManageProjectProvider = ({ children }: Props) => {
         fetchProject,
         result,
         isSuccess,
+        getOneProject,
       }}
     >
       {children}

@@ -15,11 +15,11 @@ import Terminal from "../Terminal";
 let socket: Socket;
 
 type Props = {
-  onFileChange: (id: string) => Dispatch<SetStateAction<string>>;
+  onFileChange: (id: string) =>void 
   setCode: Dispatch<SetStateAction<string>>;
   code: string;
   reset: () => void;
-  runCodeResult: string;
+  runCodeResult: string|undefined;
 };
 const File = ({ code, reset, runCodeResult, onFileChange, setCode }: Props) => {
   const { tabId,isAddUserOpen, isEmpty } = useContext(ProjectPageContext);

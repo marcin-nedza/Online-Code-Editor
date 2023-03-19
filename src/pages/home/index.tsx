@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import React, { useRef } from "react";
-import { Navbar, Sidebar } from "../../components";
+import { useRef } from "react";
+import { Navbar } from "../../components";
 import AnotherProjectBar from "../../components/ProjectBar";
 import { api } from "../../utils/api";
 

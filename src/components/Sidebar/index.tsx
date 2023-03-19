@@ -1,13 +1,14 @@
 import { File, Prisma, Project } from "@prisma/client";
 import { useEffect } from "react";
-import { TChangeStatus, TChangeStatus2 } from "../../schemas/project";
+import { TChangeStatus2 } from "../../schemas/project";
 import { api } from "../../utils/api";
 import Invitation from "./Invitation";
 import SingleProject from "./SingleProject";
 type Props = {
     project: Project & {
         files: File[];
-    };
+    } | undefined
+
     isProjectFetched: boolean;
 };
 const Sidebar = ({ isProjectFetched, project }: Props) => {

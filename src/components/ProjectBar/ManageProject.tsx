@@ -5,20 +5,8 @@ import ListOfUsers from "./ListOfUsers";
 
 type Props = {
   isHomePage: boolean;
-    fetchProject:()=>void;
-  project:
-    | (Project & {
-        colaborations: (ColaboratorsOnProject & {
-          user: {
-            username: string;
-            email: string;
-          };
-        })[];
-      })
-    | undefined;
 };
-const ManageProject = ({ isHomePage, project ,fetchProject}: Props) => {
-
+const ManageProject = ({ isHomePage }: Props) => {
   type Option = "assign" | "list";
 
   const [activeOption, setActiveOption] = useState<Option>("assign");
@@ -58,7 +46,7 @@ const ManageProject = ({ isHomePage, project ,fetchProject}: Props) => {
       </div>
       <div className="p-2 basis-4/5">
         {activeOption === "assign" && <AssingUsers />}
-        {activeOption === "list" && <ListOfUsers fetchProject={fetchProject} project={project}/>}
+        {activeOption === "list" && <ListOfUsers />}
       </div>
     </div>
   );

@@ -13,7 +13,6 @@ type Props = {
 const Pathbar = ({ projectData, handleDeleteFile }: Props) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
-  console.log(projectData.fileId);
   useOutsideAlerter(ref, setOpen);
   return (
     <div

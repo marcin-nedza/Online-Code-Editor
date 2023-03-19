@@ -28,7 +28,9 @@ export const projectRouter = createTRPCRouter({
   getAllProject: publicProcedure.query(({ ctx }) =>
     getAllProjectHandler({ ctx })
   ),
-
+getProjectQuery:publicProcedure
+    .input(getOneProjectSchema)
+    .query(({input})=>getOneProjectHandler({input})),
   getSingleProject: publicProcedure
     .input(getOneProjectSchema)
     .mutation(({ input }) => getOneProjectHandler({ input })),

@@ -1,18 +1,18 @@
 import { File } from "@prisma/client";
-import { useContext } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
 import { api } from "../../utils/api";
 
 type Props = {
-  file: File;
+    file: (File & {active:boolean});
 };
-const File = ({ file }: Props) => {
-
+const File = ({ file}: Props) => {
   const {  reset } =
     api.compiler.writeFileAndRun.useMutation();
-  const { fileTabsArray, addFileTab, activateFileTab,setIsEmpty } =
+  const { fileTabsArray, addFileTab, activateFileTab,setIsEmpty} =
     useContext(ProjectPageContext);
-  const redirect = async() => {
+    const currentFileWithActiveStatus = fileTabsArray.find(el=>el.id===file.id)
+  const redirect = () => {
     if (!fileTabsArray?.find((el) => el.id === file.id)) {
       addFileTab({ id: file.id, title: file.title });
             setIsEmpty(false)
@@ -24,7 +24,9 @@ const File = ({ file }: Props) => {
         reset()
   };
   return (
-    <div className="relative w-full pl-6 cursor-pointer hover:bg-accent2">
+    <div className={`relative w-full pl-6 
+                    cursor-pointer hover:bg-accent2 
+                    ${currentFileWithActiveStatus?.active?'bg-accent2':''}`}>
       <div
         onClick={redirect}
         className=" before:invisible 

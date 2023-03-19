@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Navbar, Sidebar } from "../../components";
 import AnotherProjectBar from "../../components/ProjectBar";
 import File from "../../components/TEST/File";
+import { ManageProjectContext } from "../../contexts/manageProjectContext";
 import ProjectPageProvider, {
   ProjectPageContext,
 } from "../../contexts/projectPageContext";
@@ -14,6 +15,12 @@ const FilePage = () => {
   const [code, setCode] = useState<string>("");
   const router = useRouter();
   const { setAddUserMenuOpen } = useContext(ProjectPageContext);
+  const {
+    fetchProject,
+    // isSuccess,
+    // result: singleProjectData,
+    getOneProject,
+  } = useContext(ManageProjectContext);
 
   const projectId = router.query?.projectId as string;
   const fileId = currentFileId;
@@ -24,12 +31,8 @@ const FilePage = () => {
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, setAddUserMenuOpen);
 
-  const {
-    mutate: getProject,
-    data: singleProjectData,
-    isSuccess,
+  const { data: singleProjectData, isSuccess } = getOneProject(projectId);
 
-  } = api.project.getSingleProject.useMutation();
   const { mutate: saveFile } = api.file.saveFile.useMutation();
 
   const {
@@ -44,9 +47,7 @@ const FilePage = () => {
     }
     return el;
   });
-    const fetchProject=()=>{
-        getProject({id:projectId})
-    }
+
   const handleRunCode = () => {
     if (singleProjectData?.data.files) {
       runCode({ files: singleProjectData?.data.files, current: code });
@@ -57,8 +58,7 @@ const FilePage = () => {
   useEffect(() => {
     reset();
     if (projectId) {
-      // getProject({ id: projectId });
-        fetchProject()
+      fetchProject(projectId);
     }
   }, [projectId]);
 
@@ -73,7 +73,7 @@ const FilePage = () => {
   };
   return (
     <ProjectPageProvider>
-      <div className="flex w-screen  overflow-x-scroll bg-gray-200 scrollbar-hide h-[calc(100vh)] ">
+      <div className="scrollbar-hide flex  h-[calc(100vh)] w-screen overflow-x-scroll bg-gray-200 ">
         <div className="flex flex-col">
           <Navbar handleSaveFile={handleSubmit} handleRunCode={handleRunCode} />
           <div className="flex h-[calc(100vh_-_var(--navbar-h))]">
@@ -82,13 +82,9 @@ const FilePage = () => {
               project={singleProjectData?.data}
             />
             <div className="flex flex-col">
-
               <AnotherProjectBar
-                setCode={setCode}
                 projectTitle={singleProjectData?.data.title}
                 isHomePage={false}
-                project={singleProjectData?.data}
-                                fetchProject={fetchProject}
               >
                 <File
                   onFileChange={handleFileIdChange}

@@ -1,43 +1,37 @@
 import { ColaboratorsOnProject, Project, User } from "@prisma/client";
 import { useContext, useRef, useState } from "react";
-import {ManageProjectContext} from "../../contexts/manageProjectContext";
+import { ManageProjectContext } from "../../contexts/manageProjectContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
 import Modal from "./Modal";
-type Props = {
-    fetchProject:()=>void;
-  project:
-    | (Project & {
-        colaborations: (ColaboratorsOnProject & {
-          user: {
-            username: string;
-            email: string;
-          };
-        })[];
-      })
-    | undefined;
-};
 
-const ListOfUsers = ({ project ,fetchProject}: Props) => {
+
+const ListOfUsers = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState("");
 
-  const { mutate: removeUser, isSuccess } =
-    api.project.deleteColaboration.useMutation();
+  const { fetchProject, result: singleProjectData } =
+    useContext(ManageProjectContext);
+  const project = singleProjectData?.data;
+
+  const { mutate: removeUser } = api.project.deleteColaboration.useMutation();
 
   const ref = useRef(null);
 
   useOutsideAlerter(ref, setOpen);
 
-  const handleRemoveUser = (user:string) => {
+  const handleRemoveUser = (user: string) => {
     if (!project?.id) {
       return;
     }
-    removeUser({ userId: user, projectId: project?.id },{
-            onSuccess:() =>{
-                fetchProject()
-            }
-        });
+    removeUser(
+      { userId: user, projectId: project?.id },
+      {
+        onSuccess: () => {
+          fetchProject(project.id);
+        },
+      }
+    );
   };
   return (
     <div className=" relative flex min-h-[50vh] w-2/3 flex-col px-2 text-sm md:flex-row">

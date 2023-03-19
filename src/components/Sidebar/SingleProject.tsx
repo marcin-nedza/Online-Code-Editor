@@ -1,9 +1,8 @@
-import File from "./File";
+import React, {  useContext, useRef, useState } from "react";
+import {ManageProjectContext} from "../../contexts/manageProjectContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
-import { useRouter } from "next/router";
-import React, { useRef, useState } from "react";
 import { api } from "../../utils/api";
-import { SimpleFile } from "../../schemas/file";
+import File from "./File";
 
 type Props = {
   id: string;
@@ -12,19 +11,23 @@ type Props = {
 };
 const SingleProject = ({ id, title, files }: Props) => {
   const isFilesPresent = files?.length > 0;
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [folderOpen, setFolderOpen] = useState(false);
   const [fileName, setFileName] = useState("");
+  const {
+        getOneProject
+  } = useContext(ManageProjectContext);
+    const {refetch} =getOneProject(id)
   const { mutate } = api.file.createFile.useMutation({
+       
+        
     onSuccess: () => {
-      refetch();
       setFileName("");
       setOpen(false);
+            refetch()
     },
   });
 
-  const { refetch } = api.project.getAllProject.useQuery();
   const handleSubmit = (e: any) => {
     e.preventDefault();
     mutate({ title: fileName, projectId: id });
@@ -32,6 +35,10 @@ const SingleProject = ({ id, title, files }: Props) => {
   const ref = useRef(null);
 
   useOutsideAlerter(ref, setOpen);
+
+  const filesWithActiveState = files?.map((el) => {
+    return { ...el, active: false };
+  });
   return (
     <div className="">
       <div
@@ -75,7 +82,12 @@ const SingleProject = ({ id, title, files }: Props) => {
       </div>
       {isFilesPresent &&
         folderOpen &&
-        files?.map((file) => <File key={file.id} file={file} />)}
+        filesWithActiveState?.map((file) => (
+          <File
+            key={file.id}
+            file={file}
+          />
+        ))}
       {folderOpen && !open && (
         <div
           onClick={() => setOpen(!open)}
