@@ -17,8 +17,10 @@ import {
   changeColaboratorStatusService,
   createProjectService,
   deleteColaboratorsOnProjectService,
+  findUniqueProjectService,
   getAllProject,
   getAssignedProjectByStatus,
+  getOneProjectService,
   saveProject,
 } from "../services/project.service";
 import { findUniqueUser } from "../services/user.service";
@@ -118,7 +120,8 @@ export const getOneProjectHandler = async ({
   input: IGetOneProjectSchema;
 }) => {
   try {
-    const project = await findUniqueProject({ id: input.id });
+        const project=await findUniqueProject({id:input.id})
+    // const project = await findUniqueProjectService({projectId:input.id});
     if (!project) {
       throw new TRPCError({
         code: "NOT_FOUND",
@@ -130,7 +133,14 @@ export const getOneProjectHandler = async ({
       data: project,
     };
   } catch (error) {
-    throw error;
+    if (error instanceof TRPCError) {
+      throw error;
+    } else {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch project",
+      });
+    }
   }
 };
 //TODO: change this to file

@@ -14,24 +14,19 @@ const FilePage = () => {
   const [currentFileId, setCurrentFileId] = useState("");
   const [code, setCode] = useState<string>("");
   const router = useRouter();
-  const { setAddUserMenuOpen } = useContext(ProjectPageContext);
-  const {
-    fetchProject,
-    // isSuccess,
-    // result: singleProjectData,
-    getOneProject,
-  } = useContext(ManageProjectContext);
-
   const projectId = router.query?.projectId as string;
   const fileId = currentFileId;
+
+  const { setAddUserMenuOpen } = useContext(ProjectPageContext);
+  const {   getOneProject,fetchProject} = useContext(ManageProjectContext);
+
+  const { data: singleProjectData, isSuccess } = getOneProject(projectId);
 
   const handleFileIdChange = (id: string) => {
     setCurrentFileId(id);
   };
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, setAddUserMenuOpen);
-
-  const { data: singleProjectData, isSuccess } = getOneProject(projectId);
 
   const { mutate: saveFile } = api.file.saveFile.useMutation();
 
@@ -57,9 +52,9 @@ const FilePage = () => {
   //then fetch current project
   useEffect(() => {
     reset();
-    if (projectId) {
-      fetchProject(projectId);
-    }
+        if(projectId) {
+            fetchProject(projectId)
+        }
   }, [projectId]);
 
   const handleSubmit = () => {
@@ -85,6 +80,7 @@ const FilePage = () => {
               <AnotherProjectBar
                 projectTitle={singleProjectData?.data.title}
                 isHomePage={false}
+                                projectId={projectId}
               >
                 <File
                   onFileChange={handleFileIdChange}

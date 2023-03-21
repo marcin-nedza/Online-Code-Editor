@@ -1,4 +1,6 @@
-import React, { useContext } from "react";
+import { useRouter } from "next/router";
+import React, { useContext, useEffect, useState } from "react";
+import { ManageProjectContext } from "../../contexts/manageProjectContext";
 import { ProjectPageContext } from "../../contexts/projectPageContext";
 import { api } from "../../utils/api";
 import ManageProject from "./ManageProject";
@@ -6,11 +8,12 @@ import Pathbar from "./Pathbar";
 
 type Props = {
   children: React.ReactNode;
-  projectTitle: string|undefined;
+  projectTitle: string | undefined;
   isHomePage: boolean;
+    projectId:string
 };
 
-const AnotherProjectBar = ({ children, projectTitle, isHomePage }: Props) => {
+const AnotherProjectBar = ({ children, projectTitle,projectId, isHomePage }: Props) => {
   const {
     fileTabsArray,
     closeTab,
@@ -21,8 +24,15 @@ const AnotherProjectBar = ({ children, projectTitle, isHomePage }: Props) => {
     setAddUserMenuOpen,
     setIsEmpty,
   } = useContext(ProjectPageContext);
+  const { getOneProject } = useContext(ManageProjectContext);
+
+  const { refetch } = getOneProject(projectId);
   const currentFileTitle = fileTabsArray.filter((el) => el.active)[0]?.title;
-  const { mutate: deleteFile } = api.file.deleteFile.useMutation();
+  const { mutate: deleteFile } = api.file.deleteFile.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
   const handleCloseTab = (fileId: string) => {
     const index = fileTabsArray.findIndex((file) => file.id === fileId);
@@ -50,7 +60,7 @@ const AnotherProjectBar = ({ children, projectTitle, isHomePage }: Props) => {
   };
   const projectData = {
     fileId: tabId,
-    projectTitle,
+    projectTitle: projectTitle ?? "",
     fileTitle: currentFileTitle,
   };
   return (
@@ -63,7 +73,7 @@ const AnotherProjectBar = ({ children, projectTitle, isHomePage }: Props) => {
           <div
             key={el.id}
             onClick={() => {
-                            console.log('inds',el)
+              console.log("inds", el);
               activateFileTab(el.id);
             }}
             className={`flex h-full min-w-[5rem] cursor-pointer items-center justify-center border-r

@@ -36,6 +36,7 @@ const File = ({ code, reset, runCodeResult, onFileChange, setCode }: Props) => {
     isSuccess,
   } = api.file.getSingleFile.useMutation({
     onSuccess: (val) => {
+            console.log('HOLA')
       setCode(val.data.content);
     },
   });

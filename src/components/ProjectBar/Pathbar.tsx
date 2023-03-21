@@ -1,16 +1,19 @@
-import React, { useRef, useState } from "react";
+import {useRouter} from "next/router";
+import React, { useContext, useRef, useState } from "react";
+import {ManageProjectContext} from "../../contexts/manageProjectContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
 import Modal from "./Modal";
 
 type Props = {
   projectData: {
-    projectTitle: string;
+    projectTitle: string ;
     fileTitle: string | undefined;
     fileId: string;
   };
   handleDeleteFile: (fileId: string) => void;
 };
 const Pathbar = ({ projectData, handleDeleteFile }: Props) => {
+
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   useOutsideAlerter(ref, setOpen);

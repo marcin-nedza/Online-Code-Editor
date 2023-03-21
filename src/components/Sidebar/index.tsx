@@ -19,21 +19,21 @@ const Sidebar = ({ isProjectFetched, project }: Props) => {
         isSuccess: isProjectsSuccess,
     } = api.project.getAssignedProjectByStatus.useMutation();
 
-    const {
-        data: acceptedProjects,
-        mutate: findAcceptedProjects,
-        isSuccess: isAcceptedProject,
-    } = api.project.getAssignedProjectByStatus.useMutation();
+    // const {
+    //     data: acceptedProjects,
+    //     mutate: findAcceptedProjects,
+    //     isSuccess: isAcceptedProject,
+    // } = api.project.getAssignedProjectByStatus.useMutation();
     const handleChangePendingProject = ({
         projectId,
         status,
     }: TChangeStatus2) => {
         changeStatus({ projectId, status });
+        mutate({status:"PENDING"})
     };
     useEffect(() => {
         mutate({ status: "PENDING" });
-        findAcceptedProjects({ status: "ACCEPTED" });
-    }, [mutate, findAcceptedProjects]);
+    }, [mutate]);
     return (
         <div className="flex   w-[var(--sidebar-w)] bg-dark-bg text-xs text-white ">
             <div className="basis-1/4 bg-main-bg"></div>
@@ -43,7 +43,7 @@ const Sidebar = ({ isProjectFetched, project }: Props) => {
                         <p className="">Project</p>
                     </div>
                     <div className="text-start">
-                        {isProjectFetched && (
+                        {isProjectFetched && project &&  (
                             <SingleProject
                                 key={project.id}
                                 title={project.title}

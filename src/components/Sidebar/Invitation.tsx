@@ -5,7 +5,7 @@ import { TChangeStatus } from "../../schemas/project";
 type Props = {
   id: string;
   title: string;
-  onClick: (input: TChangeStatus) => void;
+  onClick: (input: Omit<TChangeStatus,'userId'>) => void;
 };
 const Invitation = ({ id, title, onClick }: Props) => {
   const router = useRouter();

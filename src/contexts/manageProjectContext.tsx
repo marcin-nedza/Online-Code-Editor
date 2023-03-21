@@ -34,18 +34,21 @@ type ManageProjectContextType = {
   result: Result | undefined;
   isSuccess: boolean;
   getOneProject: (projectId: string) => {
-    data: {
-        status: string;
-        data: Project & {
+    data:
+      | {
+          status: string;
+          data: Project & {
             colaborations: (ColaboratorsOnProject & {
-                user: {
-                    username: string;
-                    email: string;
-                };
+              user: {
+                username: string;
+                email: string;
+              };
             })[];
             files: File[];
-        };
-    } | undefined;    refetch: any;
+          };
+        }
+      | undefined;
+    refetch:()=> Promise<any>;
     isSuccess: boolean;
   };
 };
@@ -67,12 +70,15 @@ const ManageProjectProvider = ({ children }: Props) => {
   const [result, setResult] = useState<Result>();
   const { mutate: getProject, isSuccess } =
     api.project.getSingleProject.useMutation();
-  const getOneProject = (projectId: string) => {
+
+  const getOneProject = (projectId: string | undefined) => {
+   
     const { data, refetch, isSuccess } = api.project.getProjectQuery.useQuery({
       id: projectId,
-    });
-    return { data, refetch, isSuccess };
+    },{onSuccess:(val)=>setProject(val.data)});
+            return { data, refetch, isSuccess };
   };
+
   const fetchProject = (projectId: string) => {
     getProject(
       { id: projectId },

@@ -1,25 +1,20 @@
-import { ColaboratorsOnProject, Project, User } from "@prisma/client";
 import { useContext, useRef, useState } from "react";
 import { ManageProjectContext } from "../../contexts/manageProjectContext";
 import useOutsideAlerter from "../../hooks/useComponentVisible";
 import { api } from "../../utils/api";
 import Modal from "./Modal";
 
-
 const ListOfUsers = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState("");
 
-  const { fetchProject, result: singleProjectData } =
-    useContext(ManageProjectContext);
-  const project = singleProjectData?.data;
 
+  const { getOneProject, project } = useContext(ManageProjectContext);
+  const { refetch } = getOneProject(project?.id);
   const { mutate: removeUser } = api.project.deleteColaboration.useMutation();
-
   const ref = useRef(null);
 
   useOutsideAlerter(ref, setOpen);
-
   const handleRemoveUser = (user: string) => {
     if (!project?.id) {
       return;
@@ -27,8 +22,8 @@ const ListOfUsers = () => {
     removeUser(
       { userId: user, projectId: project?.id },
       {
-        onSuccess: () => {
-          fetchProject(project.id);
+        onSuccess: async () => {
+          await refetch();
         },
       }
     );

@@ -9,7 +9,7 @@ export const createProjectInputSchema = z.object({
     title: z.string().min(3, "Title should be at least")
 })
 export const getOneProjectSchema = z.object({
-    id:z.string()
+    id:z.string().optional()
 })
 export const updateProjectSchema = z.object({
     id:z.string().or(z.array(z.string())),

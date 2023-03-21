@@ -1,4 +1,4 @@
-import { ColaboratorsOnProject, Project, User } from "@prisma/client";
+import { ColaboratorsOnProject, File, Project, User } from "@prisma/client";
 import React, {
   createContext,
   Dispatch,
@@ -12,10 +12,15 @@ type SimpleFile = {
   active?: boolean;
 };
 type TProject =
-  | (Project & {
-      colaborations: (ColaboratorsOnProject & { user: User })[];
-    })
-  | undefined;
+  | Project & {
+    colaborations: (ColaboratorsOnProject & {
+      user: {
+        username: string;
+        email: string;
+      };
+    })[];
+    files: File[];
+  } | undefined;
 
 type TProjectPageContext = {
   project: TProject;
