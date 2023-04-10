@@ -18,7 +18,7 @@ import {
   getOneProjectHandler,
   updateProjectHandler,
 } from "../../controllers/project.controller";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure,protectedProcedure } from "../trpc";
 
 export const projectRouter = createTRPCRouter({
   createProject: publicProcedure
@@ -28,10 +28,10 @@ export const projectRouter = createTRPCRouter({
   getAllProject: publicProcedure.query(({ ctx }) =>
     getAllProjectHandler({ ctx })
   ),
-getProjectQuery:publicProcedure
+getProjectQuery:protectedProcedure
     .input(getOneProjectSchema)
-    .query(({input})=>getOneProjectHandler({input})),
-  getSingleProject: publicProcedure
+    .query(({input,ctx})=>getOneProjectHandler({input,user:ctx.user})),
+  getSingleProject: protectedProcedure
     .input(getOneProjectSchema)
     .mutation(({ input }) => getOneProjectHandler({ input })),
   updateProject: publicProcedure

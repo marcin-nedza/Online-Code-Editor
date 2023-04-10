@@ -1,13 +1,13 @@
 import { defaultKeymap } from "@codemirror/commands";
-import { autocompletion } from "@codemirror/autocomplete";
+import {
+    EditorState,
+    StateField
+} from "@codemirror/state";
+
 import { javascript } from "@codemirror/lang-javascript";
-import { Tooltip, keymap, lineNumbers, EditorView,showTooltip } from "@codemirror/view";
+import { EditorView, keymap, lineNumbers, showTooltip, Tooltip } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { solarizedDark } from "./darkstyle";
-import {
-  EditorState,
-  StateField,
-} from "@codemirror/state";
 
 const cursorTooltipBaseTheme = EditorView.theme({
   ".cm-tooltip.cm-tooltip-cursor": {
@@ -40,11 +40,11 @@ const cursorTooltipHidden = EditorView.theme({
     },
   },
 });
+
 const basicExtensions = [
   keymap.of(defaultKeymap),
   basicSetup,
-  autocompletion({}),
-  javascript({
+     javascript({
     jsx: true,
     typescript: true,
   }),
@@ -126,8 +126,9 @@ function getCursorTooltips({
     });
 }
 export {
-  basicExtensions,
-  cursorTooltipHidden,
-  cursorTooltipBaseTheme,
-  cursorTooltipField,
+    basicExtensions,
+    cursorTooltipHidden,
+    cursorTooltipBaseTheme,
+    cursorTooltipField,
 };
+

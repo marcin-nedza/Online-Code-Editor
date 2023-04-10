@@ -1,3 +1,4 @@
+import {createDefaultMapFromNodeModules} from "@typescript/vfs";
 import { Server } from "socket.io";
 import { ROOM_ACTION } from "../../constants/events";
 import {
@@ -5,7 +6,7 @@ import {
   connectToRoomListener,
 } from "../../lib/socket/socketControllers";
 import {TSocketData} from "../../schemas/socket";
-
+import ts from 'typescript'
 type MapUser = {
   socketId: string;
   position?: number;
@@ -23,6 +24,7 @@ export default function SocketHandler(req, res: any) {
 
     io.on("connection", (socket) => {
 
+const fsMapDefaultFull = createDefaultMapFromNodeModules({ target: ts.ScriptTarget.ES2015 })
       connectToRoomListener(socket, users);
       codeChangesListener(socket, io);
 

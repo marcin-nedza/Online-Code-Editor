@@ -1,13 +1,14 @@
 import { ColaboratorsOnProject, Project } from "@prisma/client";
 import { useState } from "react";
 import AssingUsers from "./AssingUsers";
+import EditProject from "./EditProject";
 import ListOfUsers from "./ListOfUsers";
 
 type Props = {
   isHomePage: boolean;
 };
 const ManageProject = ({ isHomePage }: Props) => {
-  type Option = "assign" | "list";
+  type Option = "assign" | "list" |"edit";
 
   const [activeOption, setActiveOption] = useState<Option>("assign");
   return (
@@ -43,10 +44,21 @@ const ManageProject = ({ isHomePage }: Props) => {
         >
           List Of Users
         </div>
+        <div
+          onClick={() => setActiveOption("edit")}
+          className={`cursor-pointer border p-2 text-sm hover:border hover:border-r-0 hover:border-accent ${
+            activeOption === "edit"
+              ? "border-r-0 border-accent "
+              : "border-transparent "
+          }`}
+        >
+        Edit Project
+        </div>
       </div>
       <div className="p-2 basis-4/5">
         {activeOption === "assign" && <AssingUsers />}
         {activeOption === "list" && <ListOfUsers />}
+        {activeOption === "edit" && <EditProject />}
       </div>
     </div>
   );

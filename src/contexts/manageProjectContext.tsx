@@ -12,7 +12,12 @@ import { api } from "../utils/api";
 
 type TProject =
   | (Project & {
-      colaborations: ColaboratorsOnProject[];
+      colaborations: (ColaboratorsOnProject & {
+      user: {
+        username: string;
+        email: string;
+      };
+    })[];
     })
   | undefined;
 type Result = {
@@ -48,7 +53,7 @@ type ManageProjectContextType = {
           };
         }
       | undefined;
-    refetch:()=> Promise<any>;
+    refetch: () => Promise<any>;
     isSuccess: boolean;
   };
 };
@@ -72,11 +77,13 @@ const ManageProjectProvider = ({ children }: Props) => {
     api.project.getSingleProject.useMutation();
 
   const getOneProject = (projectId: string | undefined) => {
-   
-    const { data, refetch, isSuccess } = api.project.getProjectQuery.useQuery({
-      id: projectId,
-    },{onSuccess:(val)=>setProject(val.data)});
-            return { data, refetch, isSuccess };
+    const { data, refetch, isSuccess } = api.project.getProjectQuery.useQuery(
+      {
+        id: projectId,
+      },
+      { onSuccess: (val) => setProject(val.data) }
+    );
+    return { data, refetch, isSuccess };
   };
 
   const fetchProject = (projectId: string) => {

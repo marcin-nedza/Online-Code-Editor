@@ -10,7 +10,8 @@ import { findUniqueProjectService } from "../services/project.service";
 
 export const createFileHandler = async ({ input }: { input: TCreateFile }) => {
   try {
-    const project = await findUniqueProjectService(input.projectId);
+      console.log('INP',input)
+    const project = await findUniqueProjectService({projectId:input.projectId});
     if (!project) {
       throw new TRPCError({
         code: "NOT_FOUND",

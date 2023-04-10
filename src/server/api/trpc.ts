@@ -9,7 +9,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions&{user?:Us
     let user:User | null
     if(token && token.length>0) {
          user = decodeJwt(token).sub
-        console.log("USER",user)
     }else{
         user=null
     }
@@ -68,12 +67,9 @@ export const publicProcedure = t.procedure;
  * Reusable middleware that enforces users are logged in before running the
  * procedure
  */
- const isAuthed2=t.middleware(({next,ctx})=>{
-    if(!ctx.user) {
-       throw new Error('Not authorized') 
-        console.log('BLAD')
+ const isAuthed2=t.middleware(({next,ctx,input})=>{
+        console.log('HEJA------------------------',ctx.req.query)
      
-    }
     return next()
 })
 /**

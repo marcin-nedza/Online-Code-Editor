@@ -5,8 +5,8 @@ import AnotherProjectBar from "../../components/ProjectBar";
 import { api } from "../../utils/api";
 
 const index = () => {
-  const { data ,refetch, isFetching,isLoading} = api.project.getAllProject.useQuery();
-  const { mutate: createProject, isSuccess: isCreatedProjectSuccess } =
+  const { data ,refetch} = api.project.getAllProject.useQuery();
+  const { mutate: createProject, isSuccess  } =
     api.project.createProject.useMutation();
 
   const ref = useRef<HTMLInputElement>(null);
@@ -33,7 +33,6 @@ const index = () => {
           <Navbar />
           <div className="flex">
             <div className="flex flex-col">
-              <AnotherProjectBar projectTitle={""} isHomePage={true}>
                 <div className="flex bg-gray-200">
                   <div
                     className="relative min-h-[calc(100vh_-_(var(--navbar-h)_+_var(--sidebar-title-h)_+_var(--sidebar-title-h)))]
@@ -67,7 +66,6 @@ const index = () => {
                     </div>
                   </div>
                 </div>
-              </AnotherProjectBar>
             </div>
           </div>
         </div>

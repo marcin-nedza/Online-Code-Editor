@@ -17,10 +17,8 @@ import {
   changeColaboratorStatusService,
   createProjectService,
   deleteColaboratorsOnProjectService,
-  findUniqueProjectService,
   getAllProject,
   getAssignedProjectByStatus,
-  getOneProjectService,
   saveProject,
 } from "../services/project.service";
 import { findUniqueUser } from "../services/user.service";
@@ -115,19 +113,29 @@ export const getAllAssignedProjectsHandler = async ({
 };
 
 export const getOneProjectHandler = async ({
-  input,
+  input,user
 }: {
   input: IGetOneProjectSchema;
+        user:User
 }) => {
   try {
+        let temp=[]
         const project=await findUniqueProject({id:input.id})
-    // const project = await findUniqueProjectService({projectId:input.id});
+        temp.push(project.userId)
+        project.colaborations.map(el=>temp.push(el.userId))
+        console.log(temp)
     if (!project) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Project not found",
       });
     }
+        if(!temp.includes(user.id)){
+            return {
+                status:'failed',
+                data:[]
+            }
+        }
     return {
       status: "success",
       data: project,

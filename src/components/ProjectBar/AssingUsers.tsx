@@ -37,8 +37,8 @@ const AssingUsers = () => {
   };
   return (
     <div className="flex">
-      <div className="">
-        <p className="mb-2 text-sm">Enter users email</p>
+      <div className="pl-[8px]">
+        <p className="mb-2 text-sm ">Enter users email</p>
 
         <form onSubmit={handleSubmit} className="flex">
           <input
